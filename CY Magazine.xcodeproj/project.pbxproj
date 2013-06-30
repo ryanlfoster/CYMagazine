@@ -7,7 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		DB2C13E2177D0FF800E6D93F /* Media.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = DB2C13E1177D0FF800E6D93F /* Media.xcassets */; };
 		EC0E327616EA34B700F8A633 /* ios-icon-ipad.png in Resources */ = {isa = PBXBuildFile; fileRef = EC0E327116EA34B700F8A633 /* ios-icon-ipad.png */; };
 		EC0E327716EA34B700F8A633 /* ios-icon-ipad@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = EC0E327216EA34B700F8A633 /* ios-icon-ipad@2x.png */; };
 		EC0E327816EA34B700F8A633 /* ios-icon-iphone.png in Resources */ = {isa = PBXBuildFile; fileRef = EC0E327316EA34B700F8A633 /* ios-icon-iphone.png */; };
@@ -83,7 +82,6 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		DB2C13E1177D0FF800E6D93F /* Media.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Media.xcassets; path = "CY Magazine/Media.xcassets"; sourceTree = "<group>"; };
 		DB2C13E6177D119200E6D93F /* app icon image 100x100.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "app icon image 100x100.png"; path = "iPhone app images/app icon image 100x100.png"; sourceTree = "<group>"; };
 		DB2C13E8177D119200E6D93F /* app icon image 114x114.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "app icon image 114x114.png"; path = "iPhone app images/app icon image 114x114.png"; sourceTree = "<group>"; };
 		DB2C13E9177D119200E6D93F /* app icon image 120x120.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "app icon image 120x120.png"; path = "iPhone app images/app icon image 120x120.png"; sourceTree = "<group>"; };
@@ -95,6 +93,7 @@
 		DB2C13EF177D119200E6D93F /* app icon image 72x72.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "app icon image 72x72.png"; path = "iPhone app images/app icon image 72x72.png"; sourceTree = "<group>"; };
 		DB2C13F5177D119200E6D93F /* Default-568h@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "Default-568h@2x.png"; path = "iPhone app images/Default-568h@2x.png"; sourceTree = "<group>"; };
 		DB2C13F6177D119200E6D93F /* Default@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "Default@2x.png"; path = "iPhone app images/Default@2x.png"; sourceTree = "<group>"; };
+		DB33BACE177FE7CD0048DB77 /* Media.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Media.xcassets; path = ADVNewsstandTemplate/Media.xcassets; sourceTree = "<group>"; };
 		DBD8E977177F70FB00DDFFC8 /* en */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = en; path = ADVNewsstandTemplate/en.lproj/MainStoryboard.storyboard; sourceTree = "<group>"; };
 		DBD8E978177F80A500DDFFC8 /* TCY iphone 5 landing image.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "TCY iphone 5 landing image.png"; sourceTree = "<group>"; };
 		DBD8E979177F80A500DDFFC8 /* TCY iphone landing image 4S.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "TCY iphone landing image 4S.png"; sourceTree = "<group>"; };
@@ -388,7 +387,7 @@
 		ECB3F5E816E8D3F9002D2EA0 = {
 			isa = PBXGroup;
 			children = (
-				DB2C13E1177D0FF800E6D93F /* Media.xcassets */,
+				DB33BACE177FE7CD0048DB77 /* Media.xcassets */,
 				ECB3F5FA16E8D3FA002D2EA0 /* CYMagazineTemplate */,
 				ECB3F60C16E8D3FA002D2EA0 /* MainStoryboardiPad.storyboard */,
 				DBD8E976177F70FB00DDFFC8 /* MainStoryboard.storyboard */,
@@ -678,7 +677,6 @@
 				EC0E32A216EA3F9600F8A633 /* cellBackground@2x.png in Resources */,
 				EC0E32A316EA3F9600F8A633 /* cellDivider.png in Resources */,
 				EC0E32A416EA3F9600F8A633 /* cellDivider@2x.png in Resources */,
-				DB2C13E2177D0FF800E6D93F /* Media.xcassets in Resources */,
 				EC0E32A516EA3F9600F8A633 /* issue-cover.png in Resources */,
 				EC0E32A616EA3F9600F8A633 /* issue-cover@2x.png in Resources */,
 				EC0E32A716EA3F9600F8A633 /* navigationBackground@2x~ipad.png in Resources */,
