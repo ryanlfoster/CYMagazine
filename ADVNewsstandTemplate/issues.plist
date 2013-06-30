@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<array>
+	<dict>
+		<key>Name</key>
+		<string>Issue 1</string>
+		<key>Title</key>
+		<string>Issue 1</string>
+		<key>Date</key>
+		<date>2013-06-10T06:00:00Z</date>
+		<key>Cover</key>
+		<string>http://d2ewtegeeyjc44.cloudfront.net/issues/issue1image.png</string>
+		<key>Content</key>
+		<string>http://d2ewtegeeyjc44.cloudfront.net/issues/issue1data.zip</string>
+	</dict>
+	<dict>
+		<key>Name</key>
+		<string>Issue 2</string>
+		<key>Title</key>
+		<string>Issue 2</string>
+		<key>Date</key>
+		<date>2013-06-27T06:00:00Z</date>
+		<key>Cover</key>
+		<string>http://d2ewtegeeyjc44.cloudfront.net/issues/issue2image.png</string>
+		<key>Content</key>
+		<string>http://d2ewtegeeyjc44.cloudfront.net/issues/issue2data.zip</string>
+	</dict>
+</array>
+</plist>
