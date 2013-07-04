@@ -8,9 +8,9 @@
 #define DocumentsDirectory [NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, \
 NSUserDomainMask, YES) objectAtIndex:0]
 
-#define kFreeSubscription @"appville.subscription.free"
+#define kFreeSubscription @"cymagazine.subscription.free"
 
-#define kFreeSubscriptionReceiptId @"appville.subscription.free.receipt"
+#define kFreeSubscriptionReceiptId @"cymagazine.subscription.free.receipt"
 
 #import "StoreManager.h"
 
