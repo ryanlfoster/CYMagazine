@@ -8,11 +8,13 @@
 
 #import <Foundation/Foundation.h>
 #import <NewsstandKit/NewsstandKit.h>
+#import "Repository.h"
+#import "IssueInfo.h"
+#import "StoreManager.h"
 
-extern  NSString *PublisherDidUpdateNotification;
-extern  NSString *PublisherFailedUpdateNotification;
+@protocol PublisherDelegate;
 
-@interface Publisher : NSObject {
+@interface Publisher : NSObject <RepositoryDelegate>{
     
 }
 
@@ -20,17 +22,27 @@ extern  NSString *PublisherFailedUpdateNotification;
 
 @property (nonatomic, strong) NSArray *issues;
 
+@property (nonatomic, assign) id<PublisherDelegate> delegate;
+
 -(void)addIssuesInNewsstand;
 -(void)getIssuesList;
--(void)getIssuesListSynchronous;
 -(NSInteger)numberOfIssues;
 -(NSString *)titleOfIssueAtIndex:(NSInteger)index;
--(NSString *)nameOfIssueAtIndex:(NSInteger)index;
+-(NSString *)idOfIssueAtIndex:(NSInteger)index;
 -(void)setCoverOfIssueAtIndex:(NSInteger)index completionBlock:(void(^)(UIImage *img))block;
 -(NSURL *)contentURLForIssueWithName:(NSString *)name;
--(NSString *)downloadPathForIssue:(NKIssue *)nkIssue;
 -(UIImage *)coverImageForIssue:(NKIssue *)nkIssue;
 -(UIImage *)coverImageForIssueAtIndex:(NSInteger)index;
-
+-(IssueInfo *)issueAtIndex:(NSInteger)index;
+-(NSInteger)indexOfIssue:(IssueInfo*)issueInfo;
 -(NSString*)getBothLastComponentsFromPath:(NSString*)path;
+
+-(void)didLoadMagazineConfigurationFromServerWithSuccess:(BOOL)success;
+
+@end
+
+@protocol PublisherDelegate <NSObject>
+
+-(void)didLoadIssuesWithSuccess:(BOOL)success;
+
 @end

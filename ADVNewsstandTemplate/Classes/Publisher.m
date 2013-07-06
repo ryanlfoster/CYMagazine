@@ -6,23 +6,18 @@
 //  Copyright (c) 2011 viggiosoft. All rights reserved.
 //
 
-#define CacheDirectory [NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES) objectAtIndex:0]
+
+#define CacheDataDirectory [NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES) objectAtIndex:0]
+
 
 #import "Publisher.h"
-#import "Reachability.h"
 #import <NewsstandKit/NewsstandKit.h>
-
-NSString *PublisherDidUpdateNotification = @"PublisherDidUpdate";
-NSString *PublisherFailedUpdateNotification = @"PublisherFailedUpdate";
-
-NSString *PublisherIssuesLocation = @"http://d2ewtegeeyjc44.cloudfront.net/issues/issues-ipad.plist";
-NSString *PublisherIssuesLocationiPhone = @"http://d2ewtegeeyjc44.cloudfront.net/issues/issues-iphone.plist";
+#import "AppDelegate.h"
 
 @interface Publisher ()
 
 
 @end
-
 
 @implementation Publisher 
 
@@ -48,87 +43,43 @@ NSString *PublisherIssuesLocationiPhone = @"http://d2ewtegeeyjc44.cloudfront.net
     return self;
 }
 
--(NSString*)getIssuesLocation{
-    
-    return (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad) ? PublisherIssuesLocation : PublisherIssuesLocationiPhone;
-}
-
 -(void)getIssuesList {
     
-    Reachability *networkReachability = [Reachability reachabilityForInternetConnection];
-    NetworkStatus networkStatus = [networkReachability currentReachabilityStatus];
-    if (networkStatus == NotReachable) {
-        
-        NSString* cachedIssuesName = [CacheDirectory stringByAppendingPathComponent:@"cachedIssues.plist"];
-        
-        if ([[NSFileManager defaultManager] fileExistsAtPath:cachedIssuesName]) {
-            
-            self.issues = [NSArray arrayWithContentsOfFile:cachedIssuesName];
-            ready = YES;
-            [self addIssuesInNewsstand];
-            NSLog(@"%@",self.issues);
-            [[NSNotificationCenter defaultCenter] postNotificationName:PublisherDidUpdateNotification object:self];
-        
-        }
-        else{
-            [[NSNotificationCenter defaultCenter] postNotificationName:PublisherFailedUpdateNotification object:self];
-        }
-        
-    } else {
-        
-        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_LOW, 0),
-                   ^{
-                      NSArray *tmpIssues = [NSArray arrayWithContentsOfURL:[NSURL URLWithString:[self getIssuesLocation]]];
-                       
-                       if(!tmpIssues) {
-                           dispatch_async(dispatch_get_main_queue(), ^{
-                               [[NSNotificationCenter defaultCenter] postNotificationName:PublisherFailedUpdateNotification object:self];
-                           });
-                          
-                       } else {
-                           
-                           NSString* cachedIssuesName = [CacheDirectory stringByAppendingPathComponent:@"cachedIssues.plist"];
-                           
-                           [tmpIssues writeToFile:cachedIssuesName atomically:YES];
-                           
-                           self.issues = [[NSArray alloc] initWithArray:tmpIssues];
-                           ready = YES;
-                           [self addIssuesInNewsstand];
-                           NSLog(@"%@",self.issues);
-                           dispatch_async(dispatch_get_main_queue(), ^{
-                               [[NSNotificationCenter defaultCenter] postNotificationName:PublisherDidUpdateNotification object:self];
-                           });
-                       }
-                   });
-    }
+    Repository* repo = [AppDelegate instance].repository;
+    repo.delegate = self;
+    
+    [repo loadMagazineConfigurationFromServer];
+    
 }
 
--(void)getIssuesListSynchronous {
+-(void)didLoadMagazineConfigurationFromServerWithSuccess:(BOOL)success{
+    
+    if(success){
+        Repository* repo = [AppDelegate instance].repository;
+        
+        self.issues = [IssueInfo loadIssuesFromConfigData:[repo magazineIssues]];    
+        ready = YES;
+        [self addIssuesInNewsstand];
+    }
+    
+    [self.delegate didLoadIssuesWithSuccess:success];
 
-    NSArray *tmpIssues = [NSArray arrayWithContentsOfURL:[NSURL URLWithString:[self getIssuesLocation]]];
-   if(!tmpIssues) {
-      
-   } else {
-       
-       self.issues = [[NSArray alloc] initWithArray:tmpIssues];
-       ready = YES;
-       [self addIssuesInNewsstand];
-       NSLog(@"%@",self.issues);
-     
-   }
 }
 
 -(void)addIssuesInNewsstand {
     NKLibrary *nkLib = [NKLibrary sharedLibrary];
-    [self.issues enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
-        NSString *name = [(NSDictionary *)obj objectForKey:@"Name"];
+    
+    for (IssueInfo* issue in self.issues) {
+        NSString *name = issue.uniqueId;
         NKIssue *nkIssue = [nkLib issueWithName:name];
         if(!nkIssue) {
-            nkIssue = [nkLib addIssueWithName:name date:[(NSDictionary *)obj objectForKey:@"Date"]];
+            nkIssue = [nkLib addIssueWithName:name date:[NSDate date]];
         }
         
+        issue.nkIssue = nkIssue;
+        
         NSLog(@"Issue: %@",nkIssue);
-    }];
+    }
 }
 
 -(NSInteger)numberOfIssues {
@@ -139,24 +90,29 @@ NSString *PublisherIssuesLocationiPhone = @"http://d2ewtegeeyjc44.cloudfront.net
     }
 }
 
--(NSDictionary *)issueAtIndex:(NSInteger)index {
+-(IssueInfo *)issueAtIndex:(NSInteger)index {
     return [self.issues objectAtIndex:index];
 }
 
--(NSString *)titleOfIssueAtIndex:(NSInteger)index {
-    return [[self issueAtIndex:index] objectForKey:@"Title"];
+
+-(NSInteger)indexOfIssue:(IssueInfo*)issueInfo {
+    return [self.issues indexOfObject:issueInfo];
 }
 
--(NSString *)nameOfIssueAtIndex:(NSInteger)index {
-   return [[self issueAtIndex:index] objectForKey:@"Name"];    
+-(NSString *)titleOfIssueAtIndex:(NSInteger)index {
+    return [[self issueAtIndex:index] title];
+}
+
+-(NSString *)idOfIssueAtIndex:(NSInteger)index {
+    return [[self issueAtIndex:index] uniqueId];
 }
 
 -(void)setCoverOfIssueAtIndex:(NSInteger)index  completionBlock:(void(^)(UIImage *img))block {
-    NSURL *coverURL = [NSURL URLWithString:[[self issueAtIndex:index] objectForKey:@"Cover"]];
+    NSURL *coverURL = [NSURL URLWithString:[[self issueAtIndex:index] coverImageUrl]];
     
     NSString *coverFileName = [self getBothLastComponentsFromPath:[coverURL path]];
       
-    NSString *coverFilePath = [CacheDirectory stringByAppendingPathComponent:coverFileName];
+    NSString *coverFilePath = [CacheDataDirectory stringByAppendingPathComponent:coverFileName];
     UIImage *image = [UIImage imageWithContentsOfFile:coverFilePath];
     if(image) {
         block(image);
@@ -175,21 +131,21 @@ NSString *PublisherIssuesLocationiPhone = @"http://d2ewtegeeyjc44.cloudfront.net
 
 -(UIImage *)coverImageForIssueAtIndex:(NSInteger)index{
     
-    NSDictionary* issueInfo = [self.issues objectAtIndex:index];
-    NSString *coverPath = [issueInfo objectForKey:@"Cover"];
+    IssueInfo* issueInfo = [self.issues objectAtIndex:index];
+    NSString *coverPath = [issueInfo coverImageUrl];
     NSString *coverName = [self getBothLastComponentsFromPath:coverPath];
-    NSString *coverFilePath = [CacheDirectory stringByAppendingPathComponent:coverName];
+    NSString *coverFilePath = [CacheDataDirectory stringByAppendingPathComponent:coverName];
     UIImage *image = [UIImage imageWithContentsOfFile:coverFilePath];
     return image;
 }
 
 -(UIImage *)coverImageForIssue:(NKIssue *)nkIssue {
     NSString *name = nkIssue.name;
-    for(NSDictionary *issueInfo in self.issues) {
-        if([name isEqualToString:[issueInfo objectForKey:@"Name"]]) {
-            NSString *coverPath = [issueInfo objectForKey:@"Cover"];
+    for(IssueInfo *issueInfo in self.issues) {
+        if([name isEqualToString:[issueInfo uniqueId]]) {
+            NSString *coverPath = [issueInfo coverImageUrl];
             NSString *coverName = [self getBothLastComponentsFromPath:coverPath];
-            NSString *coverFilePath = [CacheDirectory stringByAppendingPathComponent:coverName];
+            NSString *coverFilePath = [CacheDataDirectory stringByAppendingPathComponent:coverName];
             UIImage *image = [UIImage imageWithContentsOfFile:coverFilePath];
             return image;
         }
@@ -212,10 +168,10 @@ NSString *PublisherIssuesLocationiPhone = @"http://d2ewtegeeyjc44.cloudfront.net
 
 -(NSURL *)contentURLForIssueWithName:(NSString *)name {
     __block NSURL *contentURL=nil;
-    [self.issues enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
-        NSString *aName = [(NSDictionary *)obj objectForKey:@"Name"];
+    [self.issues enumerateObjectsUsingBlock:^(IssueInfo* obj, NSUInteger idx, BOOL *stop) {
+        NSString *aName = [obj uniqueId];
         if([aName isEqualToString:name]) {
-            contentURL = [NSURL URLWithString:[(NSDictionary *)obj objectForKey:@"Content"]];
+            contentURL = [NSURL URLWithString:[obj contentUrl]];
             *stop=YES;
         }
     }];
@@ -223,8 +179,8 @@ NSString *PublisherIssuesLocationiPhone = @"http://d2ewtegeeyjc44.cloudfront.net
     return contentURL;
 }
 
--(NSString *)downloadPathForIssue:(NKIssue *)nkIssue {
-    return [[nkIssue.contentURL path] stringByAppendingPathComponent:@"magazine.pdf"];
+-(void)fetchStoreInfoForIssue:(IssueInfo*)issueInfo{
+    
+   // [AppDelegate instance].storeManager
 }
-
 @end

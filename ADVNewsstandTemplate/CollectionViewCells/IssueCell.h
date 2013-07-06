@@ -8,8 +8,15 @@
 
 #import <UIKit/UIKit.h>
 #import <NewsstandKit/NewsstandKit.h>
+#import "IssueInfo.h"
+#import "StoreManager.h"
+#import "IssueCellProtocol.h"
 
-@interface IssueCell : UICollectionViewCell
+@interface IssueCell : UICollectionViewCell <IssueInfoDelegate, IssueCellProtocol>
+
+@property (nonatomic, weak) IBOutlet UIImageView* bgImageView;
+
+@property (nonatomic, weak) IBOutlet UIImageView* dividerImageView;
 
 @property (nonatomic, weak) IBOutlet UIView* coverContainerView;
 
@@ -23,6 +30,8 @@
 
 @property (nonatomic, weak) IBOutlet UIProgressView* downloadProgress;
 
--(void)updateCellInformationWithStatus:(NKIssueContentStatus)status;
+@property (nonatomic, strong) IssueInfo* issueInfo;
+
+-(void)updateProgress:(CGFloat)progress;
 
 @end

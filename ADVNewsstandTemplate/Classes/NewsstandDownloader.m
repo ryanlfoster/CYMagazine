@@ -7,68 +7,23 @@
 //
 
 #import "NewsstandDownloader.h"
-#import "SSZipArchive.h"
-#import "Publisher.h"
+
 
 @implementation NewsstandDownloader
 
-@synthesize delegate, publisher;
-
--(id)initWithPublisher:(Publisher*)thePublisher
-{
-    self = [super init];
+-(void)downloadIssue:(IssueInfo*)issueInfo forIndexTag:(int)index{
     
-    if(self)
-    {
-        self.publisher = thePublisher;
-        
-        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(handleNotification:) name:@"com.emityme.appdesignmag.newsstand.notificationReceived" object:nil];
-    }
+    NKIssue* issue = issueInfo.nkIssue;
     
-    return self;
-}
-
--(void)handleNotification:(NSNotification*)notification
-{
-    NSLog(@"handleNotification: %@", notification);
-    
-    [self fetchContent];
-}
-
--(void)fetchContent
-{
-    [publisher getIssuesListSynchronous];
-    
-    NKLibrary *nkLib = [NKLibrary sharedLibrary];
-    
-    int numberOfIssues = [publisher numberOfIssues];
-    
-    
-    
-    //download latest issue
-    NKIssue *nkIssue = [nkLib issueWithName:[publisher nameOfIssueAtIndex:numberOfIssues - 1]]; 
-    
-    if([nkIssue status] == NKIssueContentStatusNone)
-    {
-        [self downloadIssueAtIndex:numberOfIssues - 1];
-    }
-}
-
--(void)downloadIssueAtIndex:(NSInteger)index {
-    
-    NKLibrary *nkLib = [NKLibrary sharedLibrary];
-    NSString* issueName = [publisher nameOfIssueAtIndex:index];
-    NKIssue *nkIssue = [nkLib issueWithName:issueName];
-    
-    NSURL *downloadURL = [publisher contentURLForIssueWithName:nkIssue.name];
+    NSURL *downloadURL = [NSURL URLWithString:issueInfo.contentUrl];
     
     if(!downloadURL) return;
     
     NSURLRequest *req = [NSURLRequest requestWithURL:downloadURL];
-    NKAssetDownload *assetDownload = [nkIssue addAssetWithRequest:req];
+    NKAssetDownload *assetDownload = [issue addAssetWithRequest:req];
     [assetDownload downloadWithDelegate:self];
     [assetDownload setUserInfo:[NSDictionary dictionaryWithObjectsAndKeys:
-                                [NSNumber numberWithInt:index],@"Index",
+                                [NSNumber numberWithInt:index],@"index",
                                 nil]];
 }
 
@@ -76,7 +31,7 @@
 
 -(void)updateProgressOfConnection:(NSURLConnection *)connection withTotalBytesWritten:(long long)totalBytesWritten expectedTotalBytes:(long long)expectedTotalBytes {
  
-    [delegate updateProgressOfConnection:connection withTotalBytesWritten:totalBytesWritten expectedTotalBytes:expectedTotalBytes];
+    [self.delegate updateProgressOfConnection:connection withTotalBytesWritten:totalBytesWritten expectedTotalBytes:expectedTotalBytes];
 }
 
 
@@ -84,14 +39,14 @@
 {
     NSLog(@"connection:(NSURLConnection *)connection didWriteData"); 
     
-    [delegate connection:connection didWriteData:bytesWritten totalBytesWritten:totalBytesWritten expectedTotalBytes:expectedTotalBytes];
+    [self.delegate connection:connection didWriteData:bytesWritten totalBytesWritten:totalBytesWritten expectedTotalBytes:expectedTotalBytes];
 }
 
 - (void)connectionDidResumeDownloading:(NSURLConnection *)connection totalBytesWritten:(long long)totalBytesWritten expectedTotalBytes:(long long) expectedTotalBytes
 {
     NSLog(@"connection:(NSURLConnection *)connectionDidResumeDownloading");
     
-   [delegate connectionDidResumeDownloading:connection totalBytesWritten:totalBytesWritten expectedTotalBytes:expectedTotalBytes];
+   [self.delegate connectionDidResumeDownloading:connection totalBytesWritten:totalBytesWritten expectedTotalBytes:expectedTotalBytes];
 
 }
 
@@ -101,18 +56,8 @@
     NSLog(@"connection:(NSURLConnection *)connectionDidFinishDownloading");
     NSLog(@"connection:(NSURLConnection *)connectionDidFinishDownloading");
     NKAssetDownload *asset = [connection newsstandAssetDownload];
-    NSURL* fileURL = [[asset issue] contentURL];
     
-    [SSZipArchive unzipFileAtPath:[destinationURL path] toDestination:[fileURL path]];
-    
-    // update the Newsstand icon
-    UIImage *img = [publisher coverImageForIssue:[asset issue]];
-    if(img) {
-        [[UIApplication sharedApplication] setNewsstandIconImage:img]; 
-        [[UIApplication sharedApplication] setApplicationIconBadgeNumber:1];
-    }
-
-    [delegate connectionDidFinishDownloading:connection destinationURL:destinationURL];
+    [self.delegate connectionDidFinishDownloading:connection destinationURL:destinationURL forIssue:asset.issue];
     
 }
 

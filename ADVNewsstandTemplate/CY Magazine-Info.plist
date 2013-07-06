@@ -12,23 +12,21 @@
 	<array>
 		<string>ios-icon-iphone</string>
 		<string>ios-icon-ipad</string>
+		<string>app icon image 72x72.png</string>
+		<string>app icon image 144x144.png</string>
 	</array>
 	<key>CFBundleIcons</key>
 	<dict>
-		<key>UINewsstandIcon</key>
+		<key>CFBundlePrimaryIcon</key>
 		<dict>
 			<key>CFBundleIconFiles</key>
 			<array>
-				<string>issue_01.png</string>
+				<string>ios-icon-iphone</string>
+				<string>ios-icon-ipad</string>
+				<string>app icon image 72x72.png</string>
+				<string>app icon image 144x144.png</string>
 			</array>
-			<key>UINewsstandBindingEdge</key>
-			<string>UINewsstandBindingEdgeLeft</string>
-			<key>UINewsstandBindingType</key>
-			<string>UINewsstandBindingTypeMagazine</string>
 		</dict>
-	</dict>
-	<key>CFBundleIcons~ipad</key>
-	<dict>
 		<key>UINewsstandIcon</key>
 		<dict>
 			<key>CFBundleIconFiles</key>
@@ -42,7 +40,7 @@
 		</dict>
 	</dict>
 	<key>CFBundleIdentifier</key>
-	<string>com.classicyuppie.${PRODUCT_NAME:rfc1034identifier}</string>
+	<string>com.appdesignvault.${PRODUCT_NAME:rfc1034identifier}</string>
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
 	<key>CFBundleName</key>
@@ -63,27 +61,20 @@
 	</array>
 	<key>UIMainStoryboardFile</key>
 	<string>MainStoryboard</string>
-	<key>UIMainStoryboardFile~ipad</key>
-	<string>MainStoryboardiPad</string>
 	<key>UINewsstandApp</key>
 	<true/>
 	<key>UIRequiredDeviceCapabilities</key>
 	<array>
 		<string>armv7</string>
 	</array>
-	<key>UIStatusBarHidden</key>
+	<key>UIStatusBarHidden~ipad</key>
 	<true/>
-	<key>UISupportedInterfaceOrientations</key>
-	<array>
-		<string>UIInterfaceOrientationPortrait</string>
-		<string>UIInterfaceOrientationLandscapeLeft</string>
-		<string>UIInterfaceOrientationLandscapeRight</string>
-	</array>
 	<key>UISupportedInterfaceOrientations~ipad</key>
 	<array>
 		<string>UIInterfaceOrientationPortrait</string>
 		<string>UIInterfaceOrientationLandscapeLeft</string>
 		<string>UIInterfaceOrientationLandscapeRight</string>
+		<string>UIInterfaceOrientationPortraitUpsideDown</string>
 	</array>
 </dict>
 </plist>

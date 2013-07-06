@@ -90,6 +90,8 @@
 - (id)initWithBookData:(NSDictionary *)bookData;
 - (BOOL)loadBookData:(NSDictionary *)bookData;
 
+- (void)loadBookJSONDefault;
+
 #pragma mark - HPub validation
 
 - (BOOL)validateBookJSON:(NSDictionary *)bookData withRequirements:(NSArray *)requirements;

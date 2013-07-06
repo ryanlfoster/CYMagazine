@@ -8,8 +8,9 @@
 
 #import <UIKit/UIKit.h>
 #import "AppDelegate.h"
+#import "ReaderViewController.h"
 
-@interface IssuesGridViewController : UIViewController <UICollectionViewDataSource, UICollectionViewDelegateFlowLayout, NewsstandDownloaderDelegate>
+@interface IssuesGridViewController : UIViewController <UICollectionViewDataSource, UICollectionViewDelegateFlowLayout, NewsstandDownloaderDelegate, PublisherDelegate, StoreManagerDelegate, ReaderViewControllerDelegate>
 
 @property (nonatomic, weak) IBOutlet UICollectionView *collectionView;
 
@@ -17,5 +18,14 @@
 
 @property (nonatomic, strong) Publisher* publisher;
 
+@property (nonatomic, strong) Repository* repository;
+
+@property (nonatomic, strong) StoreManager* storeManager;
+
+-(void)didLoadIssuesWithSuccess:(BOOL)success;
+
+-(void)didFetchProductInfos:(NSArray *)products withSuccess:(BOOL)success;
+
+-(void)subscriptionCompletedWith:(BOOL)success forInAppPurchaseId:(NSString *)inAppPurchaseId;
 @end
 

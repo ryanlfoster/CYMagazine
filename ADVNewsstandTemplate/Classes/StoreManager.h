@@ -15,9 +15,11 @@
 
 @property (nonatomic, assign) BOOL purchasing;
 
--(void)subscribeToMagazine;
+-(void)fetchProductInfoWithIds:(NSSet*)productIds;
 
--(BOOL)isSubscribed;
+-(void)subscribeToProduct:(SKProduct*)SKProduct;
+
+-(BOOL)isSubscribedToContent:(NSString*)inAppPurchaseId;
 
 @property (nonatomic, assign) id<StoreManagerDelegate> delegate;
 
@@ -26,6 +28,8 @@
 
 @protocol StoreManagerDelegate <NSObject>
 
--(void)subscriptionCompletedWith:(BOOL)success;
+-(void)didFetchProductInfos:(NSArray*)products withSuccess:(BOOL)success;
+
+-(void)subscriptionCompletedWith:(BOOL)success forInAppPurchaseId:(NSString*)inAppPurchaseId;
 
 @end

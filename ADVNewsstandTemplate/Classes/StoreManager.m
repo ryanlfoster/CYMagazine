@@ -8,56 +8,63 @@
 #define DocumentsDirectory [NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, \
 NSUserDomainMask, YES) objectAtIndex:0]
 
-#define kFreeSubscription @"cymagazine.subscription.free"
-
-#define kFreeSubscriptionReceiptId @"cymagazine.subscription.free.receipt"
+//#define kFreeSubscription @"advnewsstand.subscription.paid"
+//#define kFreeSubscriptionReceiptId @"advnewsstand.subscription.receipt"
 
 #import "StoreManager.h"
+#import "AppDelegate.h"
+
 
 @implementation StoreManager
 
-@synthesize purchasing, delegate;
 
--(BOOL)isSubscribed
+-(BOOL)isSubscribedToContent:(NSString*)inAppPurchaseId;
 {
-    id receipt = [[NSUserDefaults standardUserDefaults] objectForKey:kFreeSubscriptionReceiptId];
-    
-    return (receipt != nil);
-     
+    if(inAppPurchaseId){
+        id receipt = [[NSUserDefaults standardUserDefaults] objectForKey:inAppPurchaseId];
+        return (receipt != nil);
+    }
+    return NO;
 }
 
--(void)subscribeToMagazine
+
+-(void)fetchProductInfoWithIds:(NSSet*)productIds
 {
-    if(purchasing == YES) {
+    
+    if(self.purchasing == YES) {
         return;
     }
-    purchasing=YES;
+    self.purchasing=YES;
     
-    SKProductsRequest *productsRequest = [[SKProductsRequest alloc] initWithProductIdentifiers:[NSSet setWithObject:kFreeSubscription]];
+    SKProductsRequest *productsRequest = [[SKProductsRequest alloc] initWithProductIdentifiers:productIds];
     
     productsRequest.delegate=self;
     [productsRequest start];
 }
 
 -(void)requestDidFinish:(SKRequest *)request {
-    purchasing = NO;
+    self.purchasing = NO;
     NSLog(@"Request: %@",request);
 }
 
 -(void)request:(SKRequest *)request didFailWithError:(NSError *)error {
-    purchasing = NO;
+    self.purchasing = NO;
     NSLog(@"Request %@ failed with error %@",request,error);
     UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Purchase error" message:[error localizedDescription] delegate:nil cancelButtonTitle:@"Close" otherButtonTitles:nil];
     [alert show];
+    
+    [self.delegate didFetchProductInfos:nil withSuccess:NO];
 }
 
 -(void)productsRequest:(SKProductsRequest *)request didReceiveResponse:(SKProductsResponse *)response {
     
-    for(SKProduct *product in response.products) {
-        
-        SKPayment *payment = [SKPayment paymentWithProduct:product];
-        [[SKPaymentQueue defaultQueue] addPayment:payment];
-    }
+    [self.delegate didFetchProductInfos:response.products withSuccess:YES];
+}
+
+-(void)subscribeToProduct:(SKProduct *)product{
+    
+    SKPayment *payment = [SKPayment paymentWithProduct:product];
+    [[SKPaymentQueue defaultQueue] addPayment:payment];
 }
 
 -(void)paymentQueue:(SKPaymentQueue *)queue updatedTransactions:(NSArray *)transactions {
@@ -86,13 +93,13 @@ NSUserDomainMask, YES) objectAtIndex:0]
 -(void)finishedTransaction:(SKPaymentTransaction *)transaction {
     NSLog(@"Finished transaction");
     [[SKPaymentQueue defaultQueue] finishTransaction:transaction];
-    
+   
     // save receipt
-    [[NSUserDefaults standardUserDefaults] setObject:transaction.transactionIdentifier forKey:kFreeSubscriptionReceiptId];
+    [[NSUserDefaults standardUserDefaults] setObject:transaction.transactionIdentifier forKey:transaction.payment.productIdentifier];
     // check receipt
     [self checkReceipt:transaction.transactionReceipt];
     
-    [delegate subscriptionCompletedWith:YES];
+    [self.delegate subscriptionCompletedWith:YES forInAppPurchaseId:transaction.payment.productIdentifier];
 }
 
 -(void)errorWithTransaction:(SKPaymentTransaction *)transaction {
@@ -104,7 +111,7 @@ NSUserDomainMask, YES) objectAtIndex:0]
                                           otherButtonTitles:nil];
     [alert show];
     
-    [delegate subscriptionCompletedWith:NO];
+    [self.delegate subscriptionCompletedWith:NO forInAppPurchaseId:transaction.payment.productIdentifier];
 }
 
 -(void)checkReceipt:(NSData *)receipt {
@@ -116,26 +123,43 @@ NSUserDomainMask, YES) objectAtIndex:0]
     }
     [receiptStorage addObject:receipt];
     [receiptStorage writeToFile:receiptStorageFile atomically:YES];
-    
-    /*
-     https://github.com/viggiosoft/NewsstandTutorial
-     http://www.viggiosoft.com/blog/blog/2011/10/17/ios-newsstand-tutorial/
-     [ReceiptCheck validateReceiptWithData:receipt completionHandler:^(BOOL success,NSString *answer){
-     if(success==YES) {
-     NSLog(@"Receipt has been validated: %@",answer);
-     UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Purchase OK" message:nil delegate:nil cancelButtonTitle:@"Close" otherButtonTitles:nil];
-     [alert show];
-     [alert release];
-     } else {
-     NSLog(@"Receipt not validated! Error: %@",answer);
-     UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Purchase Error" message:@"Cannot validate receipt" delegate:nil cancelButtonTitle:@"Close" otherButtonTitles:nil];
-     [alert show];
-     [alert release];
-     };
-     }];*/
-    
 }
 
+/*
+- (void)requestProUpgradeProductData
+{
+    NSSet *productIdentifiers = [NSSet setWithObject:@"com.runmonster.runmonsterfree.upgradetopro" ];
+    productsRequest = [[SKProductsRequest alloc] initWithProductIdentifiers:productIdentifiers];
+    productsRequest.delegate = self;
+    [productsRequest start];
+    
+    // we will release the request object in the delegate callback
+}
 
+#pragma mark -
+#pragma mark SKProductsRequestDelegate methods
 
+- (void)productsRequest:(SKProductsRequest *)request didReceiveResponse:(SKProductsResponse *)response
+{
+    NSArray *products = response.products;
+    proUpgradeProduct = [products count] == 1 ? [[products firstObject] retain] : nil;
+    if (proUpgradeProduct)
+    {
+        NSLog(@"Product title: %@" , proUpgradeProduct.localizedTitle);
+        NSLog(@"Product description: %@" , proUpgradeProduct.localizedDescription);
+        NSLog(@"Product price: %@" , proUpgradeProduct.price);
+        NSLog(@"Product id: %@" , proUpgradeProduct.productIdentifier);
+    }
+    
+    for (NSString *invalidProductId in response.invalidProductIdentifiers)
+    {
+        NSLog(@"Invalid product id: %@" , invalidProductId);
+    }
+    
+    // finally release the reqest we alloc/init’ed in requestProUpgradeProductData
+    [productsRequest release];
+    
+    [[NSNotificationCenter defaultCenter] postNotificationName:kInAppPurchaseManagerProductsFetchedNotification object:self userInfo:nil];
+}
+*/
 @end

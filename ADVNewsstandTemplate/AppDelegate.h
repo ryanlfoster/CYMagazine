@@ -11,6 +11,8 @@
 #import "StoreManager.h"
 #import "InterceptorWindow.h"
 #import "Publisher.h"
+#import "ADVTheme.h"
+#import "Repository.h"
 
 @interface AppDelegate : UIResponder <UIApplicationDelegate>
 
@@ -21,6 +23,10 @@
 @property (nonatomic, strong) StoreManager *storeManager;
 
 @property (nonatomic, strong) Publisher *publisher;
+
+@property (nonatomic, strong) id<ADVTheme> theme;
+
+@property (nonatomic, strong) Repository* repository;
 
 +(AppDelegate*)instance;
 

@@ -9,23 +9,14 @@
 #import <Foundation/Foundation.h>
 #import <NewsstandKit/NewsstandKit.h>
 #import "IssueInfo.h"
-#import "Publisher.h"
 
 @protocol NewsstandDownloaderDelegate;
 
 @interface NewsstandDownloader : NSObject <NSURLConnectionDownloadDelegate>
 
--(id)initWithPublisher:(Publisher*)thePublisher;
-
--(void)handleNotification:(NSNotification*)notification;
-
--(void)fetchContent;
-
 @property (nonatomic, assign) id<NewsstandDownloaderDelegate> delegate;
 
-@property (nonatomic, strong) Publisher* publisher;
-
--(void)downloadIssueAtIndex:(NSInteger)index;
+-(void)downloadIssue:(IssueInfo*)issueInfo forIndexTag:(int)index;
 
 @end
 
@@ -38,6 +29,6 @@
 - (void)connectionDidResumeDownloading:(NSURLConnection *)connection totalBytesWritten:(long long)totalBytesWritten expectedTotalBytes:(long long) expectedTotalBytes;
 
 
-- (void)connectionDidFinishDownloading:(NSURLConnection *)connection destinationURL:(NSURL *) destinationURL;
+- (void)connectionDidFinishDownloading:(NSURLConnection *)connection destinationURL:(NSURL *) destinationURL forIssue:(NKIssue*)issue;
 
 @end

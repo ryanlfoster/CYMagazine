@@ -10,8 +10,17 @@
 #import "IssueCell.h"
 #import "BakerBook.h"
 #import "BakerViewController.h"
+#import "Repository.h"
+#import "ReaderDocument.h"
+#import "SSZipArchive.h"
+#import "IssueCellProtocol.h"
+#import "ADVTheme.h"
+
+#define kPDFIssueFilename @"/issue.pdf"
 
 @interface IssuesGridViewController ()
+
+@property (nonatomic, strong) SKProduct* subscriptionProduct;
 
 @end
 
@@ -20,8 +29,12 @@
 - (void)viewDidLoad
 {
     self.publisher = [[AppDelegate instance] publisher];
+    self.repository = [[AppDelegate instance] repository];
+    self.storeManager = [[AppDelegate instance] storeManager];
     
-    UINib *cellNib = [UINib nibWithNibName:@"IssueCell" bundle:nil];
+    id<ADVTheme> theme = [AppDelegate instance].theme;
+    
+    UINib *cellNib = [UINib nibWithNibName:[theme cellNibName] bundle:nil];
     [self.collectionView registerNib:cellNib forCellWithReuseIdentifier:@"IssueCell"];
     
     [self.collectionView setDelegate:self];
@@ -29,28 +42,20 @@
     
     [self.collectionView setBackgroundColor:[UIColor colorWithPatternImage:[UIImage imageNamed:@"background"]]];
     
-    NewsstandDownloader* downloader = [[AppDelegate instance] newsstandDownloader];
-    [downloader setDelegate:self];
-    
     [self loadIssues];
     
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(loadIssues) name:@"com.emityme.appdesignmag.newsstand.returnFromBackground" object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(loadIssues) name:@"com.advnewsstand.returnFromBackground" object:nil];
     
     UIBarButtonItem* trashButton =[[UIBarButtonItem alloc] initWithTitle:@"Delete all downloads" style:UIBarButtonItemStyleBordered target:self action:@selector(trashContent)];
     [trashButton setStyle:UIBarButtonItemStyleBordered];
     
     [self.navigationItem setLeftBarButtonItem:trashButton];
     
-    UILabel *label = [[UILabel alloc] initWithFrame:CGRectZero];
-    label.backgroundColor = [UIColor clearColor];
-    label.font = [UIFont boldSystemFontOfSize:20.0];
-    label.shadowColor = [UIColor colorWithWhite:0.0 alpha:0.5];
-    label.textAlignment = NSTextAlignmentCenter;
-    label.textColor = [UIColor whiteColor];
-    label.text = @"Issues";
-    [label sizeToFit];
+    UIBarButtonItem* subscribeButton =[[UIBarButtonItem alloc] initWithTitle:@"Subscribe" style:UIBarButtonItemStyleBordered target:self action:@selector(subscribeToMagazine)];
+    [subscribeButton setStyle:UIBarButtonItemStyleBordered];
+    [self.navigationItem setRightBarButtonItem:subscribeButton];
     
-    self.navigationItem.titleView = label;
+    self.title = @"Issues";
     
     [super viewDidLoad];
 	// Do any additional setup after loading the view, typically from a nib.
@@ -78,70 +83,94 @@
                   cellForItemAtIndexPath:(NSIndexPath *)indexPath
 {
     
-    IssueCell *cell = (IssueCell *)[collectionView dequeueReusableCellWithReuseIdentifier:@"IssueCell"
-                                                                     forIndexPath:indexPath];
-    NKLibrary *nkLib = [NKLibrary sharedLibrary];
+    UICollectionViewCell *cell = (IssueCell *)[collectionView dequeueReusableCellWithReuseIdentifier:@"IssueCell" forIndexPath:indexPath];
     
-    NKIssue *nkIssue = [nkLib issueWithName:[self.publisher nameOfIssueAtIndex:indexPath.row]];
-    [cell updateCellInformationWithStatus:nkIssue.status];
     
-    NSString* title = [self.publisher titleOfIssueAtIndex:indexPath.row];
-    [cell.issueTitleLabel setText:title];
-
+    IssueInfo *issueInfo = [self.publisher issueAtIndex:indexPath.row];
     
-    UIImage* coverImage = [self.publisher coverImageForIssueAtIndex:indexPath.row];
-    if(coverImage)
-    {
-        [cell.coverImageView setImage:coverImage];
-    }
-    else {
-        [cell.coverImageView setImage:nil];
-        [self.publisher setCoverOfIssueAtIndex:indexPath.row completionBlock:^(UIImage *img) {
-            
-            dispatch_async(dispatch_get_main_queue(), ^{
-                        
-                [cell.coverImageView setImage:img];
-            });
-        }];
-    }
-
+    id<IssueCellProtocol> cellProtocol = (id<IssueCellProtocol>)cell;
+    cellProtocol.issueInfo = issueInfo;
+    
+    [issueInfo loadCoverImageFromPublisher:self.publisher];
+    
     return cell;
 }
 
--(void)collectionView:(UICollectionView *)collectionView didSelectItemAtIndexPath:(NSIndexPath *)indexPath{
+-(void)collectionView:(UICollectionView *)collectionView didSelectItemAtIndexPath:(NSIndexPath *)indexPath
+{
+    int index = indexPath.row;
     
-    [self showOrDownloadIssueAtIndex:indexPath.row];
+    IssueInfo* info = [self.publisher issueAtIndex:index];
+    Repository* repo = [AppDelegate instance].repository;
+    
+    BOOL userIsSuscribedToMagazine = [self.storeManager isSubscribedToContent:[repo inAppPurchaseSubscriptionId]];
+    
+    BOOL userIsSubscribedToCurrentIssue = (info.isFreeContent) | [self.storeManager isSubscribedToContent:info.inAppPurchaseId];
+
+    if (userIsSuscribedToMagazine){
+
+        if(userIsSubscribedToCurrentIssue){
+            [self showIssue:info];
+        }
+        else{
+            
+            [info subscribeToIssue];
+        }
+    }
+    else{
+        
+        [self subscribeToMagazine];
+    }
 }
 
 
 - (CGSize)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout*)collectionViewLayout sizeForItemAtIndexPath:(NSIndexPath *)indexPath {
     
-    return CGSizeMake(300, 471);
+    id<ADVTheme> theme = [AppDelegate instance].theme;
+    return [theme cellSize];
 }
 
 
 - (UIEdgeInsets)collectionView:
 (UICollectionView *)collectionView layout:(UICollectionViewLayout*)collectionViewLayout insetForSectionAtIndex:(NSInteger)section{
-    return UIEdgeInsetsMake(50, 50, 50, 50);
+    id<ADVTheme> theme = [AppDelegate instance].theme;
+    return [theme cellEdgeInsets];
 }
 
+- (CGFloat)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout*)collectionViewLayout minimumLineSpacingForSectionAtIndex:(NSInteger)section{
+    id<ADVTheme> theme = [AppDelegate instance].theme;
+    return [theme cellLineSpacing];
+}
+
+- (CGFloat)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout*)collectionViewLayout minimumInteritemSpacingForSectionAtIndex:(NSInteger)section{
+    id<ADVTheme> theme = [AppDelegate instance].theme;
+    return [theme cellItemSpacing];
+}
+
+
+-(void)showIssue:(IssueInfo*)issueInfo{
+    
+    NKIssue *nkIssue = issueInfo.nkIssue;
+    
+    if(nkIssue.status==NKIssueContentStatusAvailable) {
+        
+        [self readIssue:issueInfo];
+        
+    } else if(nkIssue.status==NKIssueContentStatusNone) {
+        
+        [self downloadIssue:issueInfo];
+    }
+}
 
 -(void)updateProgressOfConnection:(NSURLConnection *)connection withTotalBytesWritten:(long long)totalBytesWritten expectedTotalBytes:(long long)expectedTotalBytes {
     // get asset
     NKAssetDownload *dnl = connection.newsstandAssetDownload;
+
+    int index = [[dnl.userInfo objectForKey:@"index"] intValue];
+    IssueCell* tile = (IssueCell*)[self.collectionView cellForItemAtIndexPath:[NSIndexPath indexPathForRow:index inSection:0]];
     
-    int tileIndex = [[dnl.userInfo objectForKey:@"Index"] intValue];
-    
-    NSLog(@"Tile index %d",tileIndex);
-    
-    IssueCell* tile = (IssueCell*)[self.collectionView cellForItemAtIndexPath:[NSIndexPath indexPathForRow:tileIndex inSection:0]];
-    
-    
-    UIProgressView *progressView = tile.downloadProgress;
-    [progressView setAlpha:1.0];
-    progressView.progress=1.f*totalBytesWritten/expectedTotalBytes;
-    
-    [tile updateCellInformationWithStatus:NKIssueContentStatusDownloading];
+    CGFloat progress = 1.f*totalBytesWritten/expectedTotalBytes;
+    [tile updateProgress:progress];
 }
 
 -(void)connection:(NSURLConnection *)connection didWriteData:(long long)bytesWritten totalBytesWritten:(long long)totalBytesWritten expectedTotalBytes:(long long)expectedTotalBytes {
@@ -153,12 +182,45 @@
     [self updateProgressOfConnection:connection withTotalBytesWritten:totalBytesWritten expectedTotalBytes:expectedTotalBytes];
 }
 
--(void)connectionDidFinishDownloading:(NSURLConnection *)connection destinationURL:(NSURL *)destinationURL {
-    // copy file to destination URL
+-(void)connectionDidFinishDownloading:(NSURLConnection *)connection destinationURL:(NSURL *)destinationURL forIssue:(NKIssue *)issue
+{
+    
+    NSRange range = [destinationURL.path rangeOfString:@".zip"];
+    
+    if(range.location == NSNotFound){ //Means PDF issue
+    
+        NSString* contentPDFPath = [issue.contentURL.path stringByAppendingString:kPDFIssueFilename];
+        NSFileManager* fileManager = [NSFileManager defaultManager];
+        NSError* error;
+        [fileManager moveItemAtPath:destinationURL.path toPath:contentPDFPath error:&error];
+        
+        if(error){
+            NSLog(@"Error: %@", error);
+        }
+    }
+    else{
+    
+        [SSZipArchive unzipFileAtPath:destinationURL.path toDestination:issue.contentURL.path];
+    }
+    
+    // update the Newsstand icon
+    UIImage *img = [self.publisher coverImageForIssue:issue];
+    if(img) {
+        [[UIApplication sharedApplication] setNewsstandIconImage:img];
+        [[UIApplication sharedApplication] setApplicationIconBadgeNumber:1];
+    }
     
     NSLog(@"connection:(NSURLConnection *)connectionDidFinishDownloading");
     
     [self.collectionView reloadData];
+}
+
+- (void)connection:(NSURLConnection *)connection didFailWithError:(NSError *)error{
+    UIAlertView* alert = [[UIAlertView alloc] initWithTitle:@"Download error" message:@"An error occurred while downloading the issue" delegate:self cancelButtonTitle:@"OK" otherButtonTitles:nil];
+    
+    [alert show];
+    
+    NSLog(@"Error %@", error);
 }
 
 
@@ -166,122 +228,144 @@
     
     self.collectionView.alpha = 0.0;
     
-    //[self showRefreshButton:NO];
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(publisherReady:) name:PublisherDidUpdateNotification object:self.publisher];
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(publisherFailed:) name:PublisherFailedUpdateNotification object:self.publisher];
+    self.publisher.delegate = self;
+    
     [self.publisher getIssuesList];
 }
 
--(void)publisherReady:(NSNotification *)not {
-    [[NSNotificationCenter defaultCenter] removeObserver:self name:PublisherDidUpdateNotification object:self.publisher];
-    [[NSNotificationCenter defaultCenter] removeObserver:self name:PublisherFailedUpdateNotification object:self.publisher];
-    [self showIssues];
+-(void)didLoadIssuesWithSuccess:(BOOL)success{
+    
+    if(success){
+        [self fetchInfoForAllInAppPurchases];
+    }
+    else{
+        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Error"
+                                                        message:@"Cannot get issues from publisher server."
+                                                       delegate:nil
+                                              cancelButtonTitle:@"Close"
+                                              otherButtonTitles:nil];
+        [alert show];
+    }
+    
+    self.publisher.delegate = nil;
 }
 
--(void)showIssues {
-    //[self showRefreshButton:YES];
+
+-(void)reloadGridWithIssues {
+
     self.collectionView.alpha = 1.0;
     [self.collectionView reloadData];
 }
 
--(void)publisherFailed:(NSNotification *)not {
-    [[NSNotificationCenter defaultCenter] removeObserver:self name:PublisherDidUpdateNotification object:self.publisher];
-    [[NSNotificationCenter defaultCenter] removeObserver:self name:PublisherFailedUpdateNotification object:self.publisher];
-    NSLog(@"%@",not);
-    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Error"
-                                                    message:@"Cannot get issues from publisher server."
-                                                   delegate:nil
-                                          cancelButtonTitle:@"Close"
-                                          otherButtonTitles:nil];
-    [alert show];
-    //[self showRefreshButton:YES];
-}
 
-
--(void)readIssue:(NKIssue *)nkIssue {
+-(void)readIssue:(IssueInfo *)issueInfo {
     
+    NKIssue* nkIssue = issueInfo.nkIssue;
     [[NKLibrary sharedLibrary] setCurrentlyReadingIssue:nkIssue];
     
-    NSString* issuePath = nkIssue.contentURL.path;
-    BakerBook* book = [[BakerBook alloc] initWithBookPath:issuePath bundled:NO];
-                       
-    BakerViewController *bakerViewController = [[BakerViewController alloc] initWithBook:book];
-    [self.navigationController pushViewController:bakerViewController animated:YES];
-
-    /*RootViewController* readerController = [[RootViewController alloc] init];
+    if([issueInfo.type isEqualToString:@"pdf"]){
+       
+        NSString* issuePath = [nkIssue.contentURL.path stringByAppendingString:kPDFIssueFilename];
+         ReaderDocument *document = [ReaderDocument withDocumentFilePath:issuePath password:@""];
+         
+         if (document != nil) 
+         {
+             ReaderViewController *readerViewController = [[ReaderViewController alloc] initWithReaderDocument:document];
+         
+             readerViewController.delegate = self; // Set the ReaderViewController delegate to self
+         
+             [self.navigationController presentViewController:readerViewController animated:YES completion:nil];
+         }
+    }
+    else{
+        
+        NSString* issuePath = nkIssue.contentURL.path;
+        NSDictionary* bookData = [self.repository loadHTMLMagazineDataWithPath:issuePath];
+        
+        if(bookData){
+            
+            BakerBook* book = [[BakerBook alloc] initWithBookData:bookData];
+            [book updateBookPath:issuePath bundled:NO];
+            
+            BakerViewController *bakerViewController = [[BakerViewController alloc] initWithBook:book];
+            [self.navigationController pushViewController:bakerViewController animated:YES];
+            
+        }
+    }
     
-    [[BakerAppDelegate instance].window setEventsDelegate:readerController];
-    [[BakerAppDelegate instance].window setTarget:readerController.view];
-    
-    readerController.delegate = self;
-    
-    [readerController initBook:[[nkIssue contentURL] path] andName:[nkIssue name]];
-    
-    [self presentViewController:readerController animated:YES completion:nil];
-    */
 }
 
 -(void)returnToIssueListInitiated
 {
-    //[[AppDelegate instance].window setEventsDelegate:nil];
-    //[[AppDelegate instance].window setTarget:nil];
-    
     [self dismissViewControllerAnimated:YES completion:nil];
 }
 
--(void)showOrDownloadIssueAtIndex:(int)index{
-    //StoreManager* storeManager = [AppDelegate instance].storeManager;
-    
-    //if([storeManager isSubscribed])
-    if(YES)
-    {
-        NKLibrary *nkLib = [NKLibrary sharedLibrary];
-        
-        NKIssue *nkIssue = [nkLib issueWithName:[self.publisher nameOfIssueAtIndex:index]];
-        
-        if(nkIssue.status==NKIssueContentStatusAvailable) {
-            
-            //NSDictionary *dictionary = [NSDictionary dictionaryWithObjectsAndKeys:nkIssue.name, @"IssueName", @"iPad", @"Device", nil];
-            //[Flurry logEvent:@"IssueRead" withParameters:dictionary timed:YES];
-            
-            [self readIssue:nkIssue];
-        } else if(nkIssue.status==NKIssueContentStatusNone) {
-            
-            //NSDictionary *dictionary = [NSDictionary dictionaryWithObjectsAndKeys:nkIssue.name, @"IssueName", @"iPad", @"Device", nil];
-            //[Flurry logEvent:@"IssueDownload" withParameters:dictionary timed:YES];
-            [self downloadIssueAtIndex:index];
-        }
-    }
-    else {
-        
-        [self showSubscriptionViewWithImageAtIndex:index];
-    }
-    
+- (void)dismissReaderViewController:(ReaderViewController *)viewController
+{
+   [self dismissViewControllerAnimated:YES completion:nil];
 }
 
-
--(void)downloadIssueAtIndex:(NSInteger)index {
+-(void)downloadIssue:(IssueInfo*)issueInfo{
     
     NewsstandDownloader* downloader = [[AppDelegate instance] newsstandDownloader];
-    
-    [downloader downloadIssueAtIndex:index];
-    
-    IssueCell* tile = (IssueCell*)[self.collectionView cellForItemAtIndexPath:[NSIndexPath indexPathForRow:index inSection:0]];
-    
-    [tile updateCellInformationWithStatus:NKIssueContentStatusDownloading];
+    downloader.delegate = self;
+  
+    int index = [self.publisher indexOfIssue:issueInfo];
+    [downloader downloadIssue:issueInfo forIndexTag:index];
 }
 
--(void)showSubscriptionViewWithImageAtIndex:(int)index
+-(void)subscribeToMagazine
 {
-/*    HoverViewController* subscribeController = [[HoverViewController alloc] initWithNibName:@"HoverViewController" bundle:nil];
-    [subscribeController setLatestIssueImage:[publisher coverImageForIssueAtIndex:index]];
-    [subscribeController setDelegate:self];
-    [subscribeController setModalPresentationStyle:UIModalPresentationFormSheet];
-    
-    
-    [self presentViewController:subscribeController animated:YES completion:nil];
- */
+    self.storeManager.delegate = self;
+    [self.storeManager subscribeToProduct:self.subscriptionProduct];
 }
+
+-(void)fetchInfoForAllInAppPurchases{
+    
+    NSArray* inAppPurchases = [self.repository allInAppPurchases];
+    
+    self.storeManager.delegate = self;
+    [self.storeManager fetchProductInfoWithIds:[NSSet setWithArray:inAppPurchases]];
+}
+
+-(void)didFetchProductInfos:(NSArray *)products withSuccess:(BOOL)success{
+    
+    self.storeManager.delegate = nil;
+    if(success){
+        
+        NSArray* issues = self.publisher.issues;
+        for (SKProduct* product in products) {
+            
+            if([product.productIdentifier isEqualToString:[self.repository inAppPurchaseSubscriptionId]]){
+                
+                self.subscriptionProduct = product;
+                continue;
+            }
+            
+            for (IssueInfo* issue in issues) {
+                if ([product.productIdentifier isEqualToString:issue.inAppPurchaseId]) {
+                    issue.product = product;
+                }
+            }
+        }
+    }
+    else{
+        UIAlertView* alert = [[UIAlertView alloc] initWithTitle:@"Error With Subscription" message:@"Could not find product with specified ID" delegate:self cancelButtonTitle:@"OK" otherButtonTitles: nil];
+        [alert show];
+    }
+    
+    [self reloadGridWithIssues];
+}
+
+
+-(void)subscriptionCompletedWith:(BOOL)success forInAppPurchaseId:(NSString *)inAppPurchaseId{
+   
+    self.storeManager.delegate = nil;
+    
+    UIAlertView* alert = [[UIAlertView alloc] initWithTitle:@"Success" message:@"You have successfully subscribed to the magazine. Please select an issue to start reading" delegate:self cancelButtonTitle:@"OK" otherButtonTitles:nil];
+    [alert show];
+}
+
 
 -(void)trashContent {
     NKLibrary *nkLib = [NKLibrary sharedLibrary];

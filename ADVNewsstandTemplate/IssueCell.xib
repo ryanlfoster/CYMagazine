@@ -2,10 +2,10 @@
 <archive type="com.apple.InterfaceBuilder3.CocoaTouch.iPad.XIB" version="8.00">
 	<data>
 		<int key="IBDocument.SystemTarget">1552</int>
-		<string key="IBDocument.SystemVersion">12C60</string>
+		<string key="IBDocument.SystemVersion">12E55</string>
 		<string key="IBDocument.InterfaceBuilderVersion">3084</string>
-		<string key="IBDocument.AppKitVersion">1187.34</string>
-		<string key="IBDocument.HIToolboxVersion">625.00</string>
+		<string key="IBDocument.AppKitVersion">1187.39</string>
+		<string key="IBDocument.HIToolboxVersion">626.00</string>
 		<object class="NSMutableDictionary" key="IBDocument.PluginVersions">
 			<string key="NS.key.0">com.apple.InterfaceBuilder.IBCocoaTouchPlugin</string>
 			<string key="NS.object.0">2083</string>
@@ -48,7 +48,7 @@
 								<string key="NSFrame">{{123, 168}, {42, 21}}</string>
 								<reference key="NSSuperview" ref="149705428"/>
 								<reference key="NSWindow"/>
-								<reference key="NSNextKeyView" ref="1005406526"/>
+								<reference key="NSNextKeyView" ref="555407743"/>
 								<string key="NSReuseIdentifierKey">_NS:9</string>
 								<bool key="IBUIOpaque">NO</bool>
 								<bool key="IBUIClipsSubviews">YES</bool>
@@ -80,14 +80,10 @@
 								<string key="NSFrame">{{1, 1}, {298, 469}}</string>
 								<reference key="NSSuperview" ref="149705428"/>
 								<reference key="NSWindow"/>
-								<reference key="NSNextKeyView" ref="637313847"/>
+								<reference key="NSNextKeyView" ref="1021596521"/>
 								<string key="NSReuseIdentifierKey">_NS:9</string>
 								<bool key="IBUIUserInteractionEnabled">NO</bool>
 								<string key="targetRuntimeIdentifier">IBIPadFramework</string>
-								<object class="NSCustomResource" key="IBUIImage">
-									<string key="NSClassName">NSImage</string>
-									<string key="NSResourceName">cellBackground.png</string>
-								</object>
 							</object>
 							<object class="IBUIImageView" id="555407743">
 								<reference key="NSNextResponder" ref="149705428"/>
@@ -95,14 +91,10 @@
 								<string key="NSFrame">{{1, 368}, {297, 7}}</string>
 								<reference key="NSSuperview" ref="149705428"/>
 								<reference key="NSWindow"/>
-								<reference key="NSNextKeyView" ref="595806878"/>
+								<reference key="NSNextKeyView" ref="1005406526"/>
 								<string key="NSReuseIdentifierKey">_NS:9</string>
 								<bool key="IBUIUserInteractionEnabled">NO</bool>
 								<string key="targetRuntimeIdentifier">IBIPadFramework</string>
-								<object class="NSCustomResource" key="IBUIImage">
-									<string key="NSClassName">NSImage</string>
-									<string key="NSResourceName">cellDivider.png</string>
-								</object>
 							</object>
 							<object class="IBUILabel" id="1005406526">
 								<reference key="NSNextResponder" ref="149705428"/>
@@ -150,14 +142,10 @@
 										<string key="NSFrameSize">{270, 340}</string>
 										<reference key="NSSuperview" ref="1021596521"/>
 										<reference key="NSWindow"/>
-										<reference key="NSNextKeyView" ref="555407743"/>
+										<reference key="NSNextKeyView" ref="637313847"/>
 										<string key="NSReuseIdentifierKey">_NS:9</string>
 										<bool key="IBUIUserInteractionEnabled">NO</bool>
 										<string key="targetRuntimeIdentifier">IBIPadFramework</string>
-										<object class="NSCustomResource" key="IBUIImage">
-											<string key="NSClassName">NSImage</string>
-											<string key="NSResourceName">issue-cover.png</string>
-										</object>
 									</object>
 								</array>
 								<string key="NSFrame">{{15, 20}, {270, 340}}</string>
@@ -184,10 +172,6 @@
 								<string key="NSReuseIdentifierKey">_NS:9</string>
 								<bool key="IBUIUserInteractionEnabled">NO</bool>
 								<string key="targetRuntimeIdentifier">IBIPadFramework</string>
-								<object class="NSCustomResource" key="IBUIImage">
-									<string key="NSClassName">NSImage</string>
-									<string key="NSResourceName">button-orange.png</string>
-								</object>
 							</object>
 							<object class="IBUILabel" id="670580590">
 								<reference key="NSNextResponder" ref="149705428"/>
@@ -195,6 +179,7 @@
 								<string key="NSFrame">{{99, 430}, {102, 21}}</string>
 								<reference key="NSSuperview" ref="149705428"/>
 								<reference key="NSWindow"/>
+								<reference key="NSNextKeyView"/>
 								<string key="NSReuseIdentifierKey">_NS:9</string>
 								<bool key="IBUIOpaque">NO</bool>
 								<bool key="IBUIClipsSubviews">YES</bool>
@@ -248,7 +233,7 @@
 						<string key="NSFrameSize">{299, 471}</string>
 						<reference key="NSSuperview" ref="660584003"/>
 						<reference key="NSWindow"/>
-						<reference key="NSNextKeyView" ref="1021596521"/>
+						<reference key="NSNextKeyView" ref="595806878"/>
 						<reference key="IBUIBackgroundColor" ref="853821163"/>
 						<bool key="IBUIOpaque">NO</bool>
 						<bool key="IBUIClipsSubviews">YES</bool>
@@ -325,6 +310,22 @@
 						<reference key="destination" ref="670580590"/>
 					</object>
 					<int key="connectionID">45</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBCocoaTouchOutletConnection" key="connection">
+						<string key="label">bgImageView</string>
+						<reference key="source" ref="660584003"/>
+						<reference key="destination" ref="595806878"/>
+					</object>
+					<int key="connectionID">46</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBCocoaTouchOutletConnection" key="connection">
+						<string key="label">dividerImageView</string>
+						<reference key="source" ref="660584003"/>
+						<reference key="destination" ref="555407743"/>
+					</object>
+					<int key="connectionID">47</int>
 				</object>
 			</array>
 			<object class="IBMutableOrderedSet" key="objectRecords">
@@ -433,7 +434,7 @@
 			<nil key="activeLocalization"/>
 			<dictionary class="NSMutableDictionary" key="localizations"/>
 			<nil key="sourceID"/>
-			<int key="maxID">45</int>
+			<int key="maxID">47</int>
 		</object>
 		<object class="IBClassDescriber" key="IBDocument.Classes">
 			<array class="NSMutableArray" key="referencedPartialClassDescriptions">
@@ -443,8 +444,10 @@
 					<dictionary class="NSMutableDictionary" key="outlets">
 						<string key="actionImageView">UIImageView</string>
 						<string key="actionLabel">UILabel</string>
+						<string key="bgImageView">UIImageView</string>
 						<string key="coverContainerView">UIView</string>
 						<string key="coverImageView">UIImageView</string>
+						<string key="dividerImageView">UIImageView</string>
 						<string key="downloadProgress">UIProgressView</string>
 						<string key="issueTitleLabel">UILabel</string>
 					</dictionary>
@@ -457,12 +460,20 @@
 							<string key="name">actionLabel</string>
 							<string key="candidateClassName">UILabel</string>
 						</object>
+						<object class="IBToOneOutletInfo" key="bgImageView">
+							<string key="name">bgImageView</string>
+							<string key="candidateClassName">UIImageView</string>
+						</object>
 						<object class="IBToOneOutletInfo" key="coverContainerView">
 							<string key="name">coverContainerView</string>
 							<string key="candidateClassName">UIView</string>
 						</object>
 						<object class="IBToOneOutletInfo" key="coverImageView">
 							<string key="name">coverImageView</string>
+							<string key="candidateClassName">UIImageView</string>
+						</object>
+						<object class="IBToOneOutletInfo" key="dividerImageView">
+							<string key="name">dividerImageView</string>
 							<string key="candidateClassName">UIImageView</string>
 						</object>
 						<object class="IBToOneOutletInfo" key="downloadProgress">
@@ -501,12 +512,6 @@
 		<string key="IBDocument.TargetRuntimeIdentifier">IBIPadFramework</string>
 		<bool key="IBDocument.PluginDeclaredDependenciesTrackSystemTargetVersion">YES</bool>
 		<int key="IBDocument.defaultPropertyAccessControl">3</int>
-		<dictionary class="NSMutableDictionary" key="IBDocument.LastKnownImageSizes">
-			<string key="button-orange.png">{127, 35}</string>
-			<string key="cellBackground.png">{298, 397}</string>
-			<string key="cellDivider.png">{278, 7}</string>
-			<string key="issue-cover.png">{300, 400}</string>
-		</dictionary>
 		<string key="IBCocoaTouchPluginVersion">2083</string>
 	</data>
 </archive>

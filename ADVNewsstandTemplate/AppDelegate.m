@@ -7,6 +7,10 @@
 //
 
 #import "AppDelegate.h"
+#import "BlueTheme.h"
+#import "RedTheme.h"
+#import "OrangeTheme.h"
+#import "MagrackTheme.h"
 
 @implementation AppDelegate
 
@@ -26,10 +30,12 @@
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
+    self.theme = [[MagrackTheme alloc] init];
     [self customizeTheme];
     
     self.publisher = [[Publisher alloc] init];
-    self.newsstandDownloader = [[NewsstandDownloader alloc] initWithPublisher:self.publisher];
+    self.newsstandDownloader = [[NewsstandDownloader alloc] init];
+    self.repository = [[Repository alloc] init];
     
     NKLibrary *nkLib = [NKLibrary sharedLibrary];
     
@@ -42,7 +48,6 @@
     self.storeManager = [[StoreManager alloc] init];
     [[SKPaymentQueue defaultQueue] addTransactionObserver:self.storeManager];
 
-    
     return YES;
 }
 
@@ -50,17 +55,29 @@
     
     UINavigationBar* navigationBarAppearance = [UINavigationBar appearance];
     
-    [navigationBarAppearance setBackgroundImage:[UIImage imageNamed:@"navigationBackground"] forBarMetrics:UIBarMetricsDefault];
+    [navigationBarAppearance setBackgroundImage:[UIImage imageNamed:[self.theme navigationBackgroundImage]] forBarMetrics:UIBarMetricsDefault];
+    
+    [navigationBarAppearance setTitleTextAttributes:
+     [NSDictionary dictionaryWithObjectsAndKeys:
+      [UIColor whiteColor], UITextAttributeTextColor,
+      [UIFont boldSystemFontOfSize:22.0f], UITextAttributeFont,
+      [UIColor darkGrayColor], UITextAttributeTextShadowColor,
+      [NSValue valueWithCGSize:CGSizeMake(0.0, 1.0)], UITextAttributeTextShadowOffset, nil]];
+   
     
     UIBarButtonItem* barButtonAppearance = [UIBarButtonItem appearance];
     
-    UIImage* backButtonImage = [[UIImage imageNamed:@"back"] resizableImageWithCapInsets:UIEdgeInsetsMake(10, 19, 10, 10)];
+    UIImage* backButtonImage = [[UIImage imageNamed:[self.theme backButtonImage]] resizableImageWithCapInsets:UIEdgeInsetsMake(10, 19, 10, 10)];
     
-    UIImage* barButtonImage = [[UIImage imageNamed:@"barButton"] resizableImageWithCapInsets:UIEdgeInsetsMake(10, 10, 10, 10)];
+    UIImage* barButtonImage = [[UIImage imageNamed:[self.theme barButtonImage]] resizableImageWithCapInsets:UIEdgeInsetsMake(10, 10, 10, 10)];
     
     
     [barButtonAppearance setBackButtonBackgroundImage:backButtonImage forState:UIControlStateNormal barMetrics:UIBarMetricsDefault];
     [barButtonAppearance setBackgroundImage:barButtonImage forState:UIControlStateNormal barMetrics:UIBarMetricsDefault];
+    
+    UIToolbar* toolbarAppearance = [UIToolbar appearance];
+    
+    [toolbarAppearance setBackgroundImage:[UIImage imageNamed:[self.theme navigationBackgroundImage]] forToolbarPosition:UIToolbarPositionAny barMetrics:UIBarMetricsDefault];
 }
 							
 - (void)applicationWillResignActive:(UIApplication *)application
@@ -83,7 +100,7 @@
     NSLog(@"application:didReReturnFromBackground: -");
     
     [[NSNotificationCenter defaultCenter] postNotificationName:
-     @"com.emityme.appdesignmag.newsstand.returnFromBackground"
+     @"com.advnewsstand.returnFromBackground"
                                                         object:self];
 
 }

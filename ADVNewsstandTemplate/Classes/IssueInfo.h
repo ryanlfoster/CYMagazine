@@ -8,14 +8,53 @@
 
 #import <Foundation/Foundation.h>
 #import <NewsstandKit/NewsstandKit.h>
+#import <StoreKit/StoreKit.h>
+#import "StoreManager.h"
 
-@interface IssueInfo : NSObject
+@class Publisher;
 
-@property (nonatomic, strong) NSString* name;
+@protocol IssueInfoDelegate;
 
-@property (nonatomic, strong) NSDate* publicationDate;
+@interface IssueInfo : NSObject <StoreManagerDelegate>
 
-@property (nonatomic, strong) NSString* url;
+@property (nonatomic, strong) NSString* uniqueId;
 
-@property (nonatomic, strong) NKIssue* issue;
+@property (nonatomic, strong) NSString* title;
+
+@property (nonatomic, strong) NSString* publicationDate;
+
+@property (nonatomic, strong) NSString* coverImageUrl;
+
+@property (nonatomic, strong) NSString* contentUrl;
+
+@property (nonatomic, strong) NSString* type;
+
+@property (nonatomic, assign) BOOL isPaidContent;
+
+@property (nonatomic, readonly) BOOL isFreeContent;
+
+@property (nonatomic, strong) NSString* inAppPurchaseId;
+
+@property (nonatomic, strong) NKIssue* nkIssue;
+
+@property (nonatomic, strong) SKProduct* product;
+
+@property (nonatomic, assign) id<IssueInfoDelegate> delegate;
+
++(NSArray*)loadIssuesFromConfigData:(NSArray*)data;
+
+-(void)subscribeToIssue;
+
+-(void)loadCoverImageFromPublisher:(Publisher*)publisher;
+@end
+
+
+@protocol IssueInfoDelegate <NSObject>
+
+-(void)subscriptionCompleted;
+
+-(void)displayProductInfo;
+
+-(void)displayCoverImage:(UIImage*)image;
+
 @end
