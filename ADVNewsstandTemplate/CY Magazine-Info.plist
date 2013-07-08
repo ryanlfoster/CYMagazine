@@ -40,7 +40,7 @@
 		</dict>
 	</dict>
 	<key>CFBundleIdentifier</key>
-	<string>com.appdesignvault.${PRODUCT_NAME:rfc1034identifier}</string>
+	<string>com.classicyuppie.CY-Magazine</string>
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
 	<key>CFBundleName</key>
