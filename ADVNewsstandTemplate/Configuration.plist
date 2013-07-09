@@ -3,6 +3,6 @@
 <plist version="1.0">
 <dict>
 	<key>IssueConfigurationLocation</key>
-	<string>http://d2ewtegeeyjc44.cloudfront.net/issues/issues-type.json</string>
+	<string>http://cymagazine.s3.amazonaws.com/issues/issues-type.json</string>
 </dict>
 </plist>
