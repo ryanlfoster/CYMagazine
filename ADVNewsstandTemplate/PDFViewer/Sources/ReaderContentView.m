@@ -45,11 +45,14 @@
 
 #define ZOOM_LEVELS 4
 
+
+
 #if (READER_SHOW_SHADOWS == TRUE) // Option
 	#define CONTENT_INSET 4.0f
 #else
 	#define CONTENT_INSET 2.0f
 #endif // end of READER_SHOW_SHADOWS Option
+
 
 #define PAGE_THUMB_LARGE 240
 #define PAGE_THUMB_SMALL 144

@@ -618,6 +618,7 @@
 				if ([lastHideTime timeIntervalSinceNow] < -0.75) // Delay since hide
 				{
                     [self showNavigationBar];
+                    [mainPagebar showPagebar];
 				}
 			}
 
@@ -714,7 +715,7 @@
 		}
 
 		//[mainToolbar hideToolbar];
-        //[mainPagebar hidePagebar]; // Hide
+        [mainPagebar hidePagebar]; // Hide
         [self hideBars:YES];
 
 		lastHideTime = [NSDate date];
