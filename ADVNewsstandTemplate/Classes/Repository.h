@@ -27,6 +27,8 @@
 -(NSArray*)allInAppPurchases;
 
 -(NSDictionary*)loadHTMLMagazineDataWithPath:(NSString*)path;
+
+-(NSString*)getSubscriptionText;
 @end
 
 

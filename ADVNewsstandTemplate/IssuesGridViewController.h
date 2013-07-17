@@ -9,8 +9,9 @@
 #import <UIKit/UIKit.h>
 #import "AppDelegate.h"
 #import "ReaderViewController.h"
+#import "IssueCellHeader.h"
 
-@interface IssuesGridViewController : UIViewController <UICollectionViewDataSource, UICollectionViewDelegateFlowLayout, NewsstandDownloaderDelegate, PublisherDelegate, StoreManagerDelegate, ReaderViewControllerDelegate>
+@interface IssuesGridViewController : UIViewController <UICollectionViewDataSource, UICollectionViewDelegateFlowLayout, NewsstandDownloaderDelegate, PublisherDelegate, StoreManagerDelegate, ReaderViewControllerDelegate, IssueCellHeaderDelegate>
 
 @property (nonatomic, weak) IBOutlet UICollectionView *collectionView;
 
@@ -25,6 +26,8 @@
 -(void)didLoadIssuesWithSuccess:(BOOL)success;
 
 -(void)didFetchProductInfos:(NSArray *)products withSuccess:(BOOL)success;
+
+-(void)subscribeButtonTapped;
 
 -(void)subscriptionCompletedWith:(BOOL)success forInAppPurchaseId:(NSString *)inAppPurchaseId;
 @end

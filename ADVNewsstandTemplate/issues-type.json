@@ -1,24 +1,14 @@
 {
-	"magazine-title": "CY Magazine",
-	"in-app-purchase-id": "classicyuppie.monthlysubscription.paid",
-	"issues": [
-		 {
-				  "uniqueId"	: "001",
-				  "title"		: "August 2013",
-				  "date"			: "1 Aug 2013",
-				  "type"			: "html",
-				  "coverImageUrl": "http://d2ewtegeeyjc44.cloudfront.net/issues/Vol1Issue1.png",
-				  "contentUrl"	: "http://d2ewtegeeyjc44.cloudfront.net/issues/issue1data.zip",
-				  "in-app-purchase-id": "com.classicyuppie.CYMagazine.Aug2013"
-		 },
-		 {
-				  "uniqueId"	: "002",
-				  "title"		: "September 2013",
-				  "date"			: "1 Sep 2013",
-				  "type"			: "html",
-				  "coverImageUrl": "http://d2ewtegeeyjc44.cloudfront.net/issues/Vol1Issue2.png",
-				  "contentUrl"	: "http://d2ewtegeeyjc44.cloudfront.net/issues/issue2data.zip",
-				  "in-app-purchase-id": "com.classicyuppie.CYMagazine.Sep2013"
-		 }
-	]
+    "magazine-title": "CY Magazine",
+    "in-app-purchase-id": "classicyuppie.monthlysubscription.paid",
+    "issues": [
+        {
+               "uniqueId"	: "001",
+               "title"		: "August 2013",
+               "date"		: "1 Aug 2013",
+               "type"      : "html",
+               "coverImageUrl": "http://d2ewtegeeyjc44.cloudfront.net/issues/aug2013.png",
+               "contentUrl": "http://cymagazine.s3.amazonaws.com/issues/aug2013.zip"
+        }
+    ]
 }

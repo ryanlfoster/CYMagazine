@@ -12,8 +12,6 @@
 	<array>
 		<string>ios-icon-iphone</string>
 		<string>ios-icon-ipad</string>
-		<string>app icon image 72x72.png</string>
-		<string>app icon image 144x144.png</string>
 	</array>
 	<key>CFBundleIcons</key>
 	<dict>
@@ -23,8 +21,6 @@
 			<array>
 				<string>ios-icon-iphone</string>
 				<string>ios-icon-ipad</string>
-				<string>app icon image 72x72.png</string>
-				<string>app icon image 144x144.png</string>
 			</array>
 		</dict>
 		<key>UINewsstandIcon</key>
@@ -53,15 +49,13 @@
 	<string>????</string>
 	<key>CFBundleVersion</key>
 	<string>1.0</string>
-	<key>LSApplicationCategoryType</key>
-	<string>public.app-category.lifestyle</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>UIBackgroundModes</key>
 	<array>
 		<string>newsstand-content</string>
 	</array>
-	<key>UIMainStoryboardFile~ipad</key>
+	<key>UIMainStoryboardFile</key>
 	<string>MainStoryboard</string>
 	<key>UINewsstandApp</key>
 	<true/>
@@ -69,21 +63,12 @@
 	<array>
 		<string>armv7</string>
 	</array>
-	<key>UIStatusBarHidden~ipad</key>
-	<true/>
-	<key>UISupportedInterfaceOrientations</key>
-	<array>
-		<string>UIInterfaceOrientationPortrait</string>
-		<string>UIInterfaceOrientationLandscapeLeft</string>
-		<string>UIInterfaceOrientationLandscapeRight</string>
-		<string>UIInterfaceOrientationPortraitUpsideDown</string>
-	</array>
 	<key>UISupportedInterfaceOrientations~ipad</key>
 	<array>
 		<string>UIInterfaceOrientationPortrait</string>
+		<string>UIInterfaceOrientationPortraitUpsideDown</string>
 		<string>UIInterfaceOrientationLandscapeLeft</string>
 		<string>UIInterfaceOrientationLandscapeRight</string>
-		<string>UIInterfaceOrientationPortraitUpsideDown</string>
 	</array>
 </dict>
 </plist>

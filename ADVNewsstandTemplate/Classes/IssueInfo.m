@@ -41,6 +41,16 @@
     return !self.isPaidContent;
 }
 
+-(BOOL)userHasSubscribedToIssue{
+    if(self.isFreeContent){
+        return YES;
+    }else{
+        
+        StoreManager* storeManager = [AppDelegate instance].storeManager;
+        return [storeManager isSubscribedToContent:self.inAppPurchaseId];
+    }
+}
+
 -(void)subscribeToIssue{
     
     StoreManager* storeManager = [AppDelegate instance].storeManager;
@@ -64,7 +74,7 @@
         
         UIAlertView* alert = [[UIAlertView alloc] initWithTitle:@"Success" message:@"You have successfully subscribed to this issue. Please select it to start your download" delegate:self cancelButtonTitle:@"OK" otherButtonTitles:nil];
         [alert show];
-    }
+    }  
 }
 
 -(void)loadCoverImageFromPublisher:(id)publisher{
@@ -88,6 +98,10 @@
         }];
     }
 
+}
+
+-(void)didRestoreAllPurchases{
+    
 }
 
 @end

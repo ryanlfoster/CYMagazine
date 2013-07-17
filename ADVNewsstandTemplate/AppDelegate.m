@@ -20,14 +20,6 @@
     return [[UIApplication sharedApplication] delegate];
 }
 
-- (InterceptorWindow *)window
-{
-    static InterceptorWindow *customWindow = nil;
-    if (!customWindow) customWindow = [[InterceptorWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
-    customWindow.backgroundColor = [UIColor whiteColor];
-    return customWindow;
-}
-
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
     self.theme = [[MagrackTheme alloc] init];
@@ -50,36 +42,7 @@
 
     return YES;
 }
-
--(void)customizeTheme{
-    
-    UINavigationBar* navigationBarAppearance = [UINavigationBar appearance];
-    
-    [navigationBarAppearance setBackgroundImage:[UIImage imageNamed:[self.theme navigationBackgroundImage]] forBarMetrics:UIBarMetricsDefault];
-    
-    [navigationBarAppearance setTitleTextAttributes:
-     [NSDictionary dictionaryWithObjectsAndKeys:
-      [UIColor whiteColor], UITextAttributeTextColor,
-      [UIFont boldSystemFontOfSize:22.0f], UITextAttributeFont,
-      [UIColor darkGrayColor], UITextAttributeTextShadowColor,
-      [NSValue valueWithCGSize:CGSizeMake(0.0, 1.0)], UITextAttributeTextShadowOffset, nil]];
-   
-    
-    UIBarButtonItem* barButtonAppearance = [UIBarButtonItem appearance];
-    
-    UIImage* backButtonImage = [[UIImage imageNamed:[self.theme backButtonImage]] resizableImageWithCapInsets:UIEdgeInsetsMake(10, 19, 10, 10)];
-    
-    UIImage* barButtonImage = [[UIImage imageNamed:[self.theme barButtonImage]] resizableImageWithCapInsets:UIEdgeInsetsMake(10, 10, 10, 10)];
-    
-    
-    [barButtonAppearance setBackButtonBackgroundImage:backButtonImage forState:UIControlStateNormal barMetrics:UIBarMetricsDefault];
-    [barButtonAppearance setBackgroundImage:barButtonImage forState:UIControlStateNormal barMetrics:UIBarMetricsDefault];
-    
-    UIToolbar* toolbarAppearance = [UIToolbar appearance];
-    
-    [toolbarAppearance setBackgroundImage:[UIImage imageNamed:[self.theme navigationBackgroundImage]] forToolbarPosition:UIToolbarPositionAny barMetrics:UIBarMetricsDefault];
-}
-							
+						
 - (void)applicationWillResignActive:(UIApplication *)application
 {
     // Sent when the application is about to move from active to inactive state. This can occur for certain types of temporary interruptions (such as an incoming phone call or SMS message) or when the user quits the application and it begins the transition to the background state.
@@ -104,6 +67,67 @@
                                                         object:self];
 
 }
+
+-(void)customizeTheme{
+    
+    UINavigationBar* navigationBarAppearance = [UINavigationBar appearance];
+    
+    [navigationBarAppearance setBackgroundImage:[UIImage imageNamed:[self.theme navigationBackgroundImage]] forBarMetrics:UIBarMetricsDefault];
+    
+    [navigationBarAppearance setTitleTextAttributes:
+     [NSDictionary dictionaryWithObjectsAndKeys:
+      [UIColor whiteColor], UITextAttributeTextColor,
+      [UIFont boldSystemFontOfSize:22.0f], UITextAttributeFont,
+      [UIColor darkGrayColor], UITextAttributeTextShadowColor,
+      [NSValue valueWithCGSize:CGSizeMake(0.0, 1.0)], UITextAttributeTextShadowOffset, nil]];
+    
+    
+    UIBarButtonItem* barButtonAppearance = [UIBarButtonItem appearance];
+    
+    UIImage* backButtonImage = [[UIImage imageNamed:[self.theme backButtonImage]] resizableImageWithCapInsets:UIEdgeInsetsMake(10, 19, 10, 10)];
+    
+    UIImage* barButtonImage = [self createSolidColorImageWithColor:[UIColor colorWithWhite:1.0 alpha:0.1] andSize:CGSizeMake(10, 10)];
+    
+    [barButtonAppearance setBackgroundImage:barButtonImage forState:UIControlStateNormal barMetrics:UIBarMetricsDefault];
+    [barButtonAppearance setBackgroundImage:barButtonImage forState:UIControlStateNormal barMetrics:UIBarMetricsLandscapePhone];
+    
+    [barButtonAppearance setTitleTextAttributes:[NSDictionary dictionaryWithObjectsAndKeys:
+                                                 [UIColor whiteColor], UITextAttributeTextColor,
+                                                 [UIFont boldSystemFontOfSize:14.0f], UITextAttributeFont, [UIColor darkGrayColor], UITextAttributeTextShadowColor,  [NSValue valueWithCGSize:CGSizeMake(0.0, -1.0)], UITextAttributeTextShadowOffset,
+                                                 nil] forState:UIControlStateNormal];
+    
+
+    [barButtonAppearance setBackButtonBackgroundImage:backButtonImage forState:UIControlStateNormal barMetrics:UIBarMetricsDefault];
+    
+    [barButtonAppearance setBackgroundImage:barButtonImage forState:UIControlStateNormal barMetrics:UIBarMetricsDefault];
+    
+    UIToolbar* toolbarAppearance = [UIToolbar appearance];
+    
+    [toolbarAppearance setBackgroundImage:[UIImage imageNamed:[self.theme navigationBackgroundImage]] forToolbarPosition:UIToolbarPositionAny barMetrics:UIBarMetricsDefault];
+}
+
+-(void)styleBarButtonWithTextColor:(UIColor*)color{
+    
+    
+       
+}
+
+-(UIImage*)createSolidColorImageWithColor:(UIColor*)color andSize:(CGSize)size{
+    
+    CGFloat scale = [[UIScreen mainScreen] scale];
+    UIGraphicsBeginImageContextWithOptions(size, NO, scale);
+    
+    CGContextRef currentContext = UIGraphicsGetCurrentContext();
+    CGRect fillRect = CGRectMake(0,0,size.width,size.height);
+    CGContextSetFillColorWithColor(currentContext, color.CGColor);
+    CGContextFillRect(currentContext, fillRect);
+    
+    UIImage *image = UIGraphicsGetImageFromCurrentImageContext();
+    UIGraphicsEndImageContext();
+    
+    return image;
+}
+
 
 
 - (void)applicationDidBecomeActive:(UIApplication *)application

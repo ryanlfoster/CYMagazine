@@ -4,5 +4,7 @@
 <dict>
 	<key>IssueConfigurationLocation</key>
 	<string>http://cymagazine.s3.amazonaws.com/issues/issues-type.json</string>
+	<key>SubscriptionText</key>
+	<string>Subscribe to weekly CY Magazine to get access to all issues. Only $1.99/month.</string>
 </dict>
 </plist>

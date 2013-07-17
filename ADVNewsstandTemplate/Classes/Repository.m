@@ -9,6 +9,7 @@
 #define kConfigFilename @"Configuration"
 #define kCachedConfigFilename @"cachedConfig.json"
 #define kConfigLocationKey @"IssueConfigurationLocation"
+#define kSubscriptionTextKey @"SubscriptionText"
 #define CacheDirectory [NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES) objectAtIndex:0]
 
 #import "Repository.h"
@@ -117,11 +118,22 @@
 
 -(NSString*)getIssuesLocation{
     
+    return [self getTextFromConfigurationWithKey:kConfigLocationKey];
+    
+}
+
+-(NSString*)getSubscriptionText{
+    
+    return [self getTextFromConfigurationWithKey:kSubscriptionTextKey];
+}
+
+-(NSString*)getTextFromConfigurationWithKey:(NSString*)key{
+    
     NSString* path = [[NSBundle mainBundle] pathForResource:kConfigFilename ofType:@"plist"];
     
     NSDictionary* config = [[NSDictionary alloc] initWithContentsOfFile:path];
     
-    return config[kConfigLocationKey];
+    return config[key];
     
 }
 
@@ -143,24 +155,7 @@
             }
         }
         
-        NSDictionary* data = @{
-                               
-                               @"hpub": [NSNumber numberWithInt:1],
-                               @"title": @"Newsstand",
-                               @"author": @"Author",
-                               @"creator": @"Creator",
-                               @"date": @"2013-04-10",
-                               @"url": @"book://newsstand.com/mag",
-                               @"cover": @"cover-image.png",
-                               @"orientation": @"both",
-                               @"zoomable": [NSNumber numberWithBool:NO],
-                               @"-baker-background": @"#FFFFFF",
-                               @"-baker-vertical-bounce": [NSNumber numberWithBool:YES],
-                               @"-baker-media-autoplay": [NSNumber numberWithBool:YES],
-                               @"-baker-background-image-portrait": @"gfx/background-portrait.png",
-                               @"-baker-background-image-landscape": @"gfx/background-landscape.png",
-                               @"-baker-page-numbers-color": @"#000000",
-                               @"contents": contents};
+        NSDictionary* data = @{@"contents": contents};
         
         return data;
     

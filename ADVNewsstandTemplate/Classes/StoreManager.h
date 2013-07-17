@@ -21,6 +21,8 @@
 
 -(BOOL)isSubscribedToContent:(NSString*)inAppPurchaseId;
 
+-(void)restorePurchases;
+
 @property (nonatomic, assign) id<StoreManagerDelegate> delegate;
 
 @end
@@ -31,5 +33,7 @@
 -(void)didFetchProductInfos:(NSArray*)products withSuccess:(BOOL)success;
 
 -(void)subscriptionCompletedWith:(BOOL)success forInAppPurchaseId:(NSString*)inAppPurchaseId;
+
+-(void)didRestoreAllPurchases;
 
 @end

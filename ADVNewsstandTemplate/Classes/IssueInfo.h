@@ -46,6 +46,8 @@
 -(void)subscribeToIssue;
 
 -(void)loadCoverImageFromPublisher:(Publisher*)publisher;
+
+-(BOOL)userHasSubscribedToIssue;
 @end
 
 

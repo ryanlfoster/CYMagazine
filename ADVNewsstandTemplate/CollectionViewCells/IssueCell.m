@@ -87,8 +87,13 @@
         [numberFormatter setNumberStyle:NSNumberFormatterCurrencyStyle];
         [numberFormatter setLocale:issueInfo.product.priceLocale];
         
-        NSString* price = [numberFormatter stringFromNumber:issueInfo.product.price];
-        self.callToActionText = [NSString stringWithFormat:@"%@ - BUY NOW", price];
+        if([issueInfo userHasSubscribedToIssue]){
+            self.callToActionText = @"DOWNLOAD";
+        }
+        else{
+            NSString* price = [numberFormatter stringFromNumber:issueInfo.product.price];
+            self.callToActionText = [NSString stringWithFormat:@"%@ - BUY NOW", price];
+        }
         
     }else{
         
@@ -108,9 +113,7 @@
 
 -(void)subscriptionCompleted{
     
-    self.callToActionText = @"DOWNLOAD";
-    self.actionLabel.text = self.callToActionText;
-    
+    [self displayProductInfo];
 }
 
 -(void)updateProgress:(CGFloat)progress{

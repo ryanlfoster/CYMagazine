@@ -87,8 +87,15 @@
         [numberFormatter setNumberStyle:NSNumberFormatterCurrencyStyle];
         [numberFormatter setLocale:issueInfo.product.priceLocale];
         
-        NSString* price = [numberFormatter stringFromNumber:issueInfo.product.price];
-        self.callToActionText = [NSString stringWithFormat:@"%@ - %@", price, kBuyNowCTA];
+        
+        if([issueInfo userHasSubscribedToIssue]){
+            self.callToActionText = kDownloadCTA;
+        }
+        else{
+            NSString* price = [numberFormatter stringFromNumber:issueInfo.product.price];
+            self.callToActionText = [NSString stringWithFormat:@"%@ - %@", price, kBuyNowCTA];
+        }
+        
         
     }else{
         

@@ -8,15 +8,14 @@
 
 #import "IssuesGridViewController.h"
 #import "IssueCell.h"
-#import "BakerBook.h"
-#import "BakerViewController.h"
+#import "IssueCellHeader.h"
 #import "Repository.h"
 #import "ReaderDocument.h"
 #import "SSZipArchive.h"
 #import "IssueCellProtocol.h"
 #import "ADVTheme.h"
+#import "MagazinePageViewController.h"
 
-#define kPDFIssueFilename @"/issue.pdf"
 
 @interface IssuesGridViewController ()
 
@@ -37,6 +36,9 @@
     UINib *cellNib = [UINib nibWithNibName:[theme cellNibName] bundle:nil];
     [self.collectionView registerNib:cellNib forCellWithReuseIdentifier:@"IssueCell"];
     
+    UINib *headerNib = [UINib nibWithNibName:@"IssueCellHeader" bundle:nil];
+    [self.collectionView registerNib:headerNib forSupplementaryViewOfKind:UICollectionElementKindSectionHeader withReuseIdentifier:@"IssueCellHeader"];
+    
     [self.collectionView setDelegate:self];
     [self.collectionView setDataSource:self];
     
@@ -51,9 +53,9 @@
     
     [self.navigationItem setLeftBarButtonItem:trashButton];
     
-    UIBarButtonItem* subscribeButton =[[UIBarButtonItem alloc] initWithTitle:@"Subscribe" style:UIBarButtonItemStyleBordered target:self action:@selector(subscribeToMagazine)];
-    [subscribeButton setStyle:UIBarButtonItemStyleBordered];
-    [self.navigationItem setRightBarButtonItem:subscribeButton];
+    UIBarButtonItem* restoreButton =[[UIBarButtonItem alloc] initWithTitle:@"Restore Purchases" style:UIBarButtonItemStyleBordered target:self action:@selector(restorePurchases)];
+    [restoreButton setStyle:UIBarButtonItemStyleBordered];
+    [self.navigationItem setRightBarButtonItem:restoreButton];
     
     self.title = @"Issues";
     
@@ -96,6 +98,23 @@
     return cell;
 }
 
+-(UICollectionReusableView*)collectionView:(UICollectionView *)collectionView viewForSupplementaryElementOfKind:(NSString *)kind atIndexPath:(NSIndexPath *)indexPath{
+    
+    BOOL userIsSusbcribedToTheMagazine = [self.storeManager isSubscribedToContent:[self.repository inAppPurchaseSubscriptionId]];
+    
+    if (kind == UICollectionElementKindSectionHeader && !userIsSusbcribedToTheMagazine) {
+        
+        IssueCellHeader* headerView = [self.collectionView dequeueReusableSupplementaryViewOfKind:kind withReuseIdentifier:@"IssueCellHeader" forIndexPath:indexPath];
+        
+        headerView.subscribeInfoLabel.text = [self.repository getSubscriptionText];
+        headerView.delegate = self;
+        
+        return headerView;
+    }
+    
+    return nil;
+}
+
 -(void)collectionView:(UICollectionView *)collectionView didSelectItemAtIndexPath:(NSIndexPath *)indexPath
 {
     int index = indexPath.row;
@@ -106,20 +125,23 @@
     BOOL userIsSuscribedToMagazine = [self.storeManager isSubscribedToContent:[repo inAppPurchaseSubscriptionId]];
     
     BOOL userIsSubscribedToCurrentIssue = (info.isFreeContent) | [self.storeManager isSubscribedToContent:info.inAppPurchaseId];
-
-    if (userIsSuscribedToMagazine){
-
-        if(userIsSubscribedToCurrentIssue){
+    
+    if (info.isFreeContent){
+        if(userIsSuscribedToMagazine){
             [self showIssue:info];
         }
         else{
-            
-            [info subscribeToIssue];
+            [self subscribeToMagazine];
         }
     }
     else{
         
-        [self subscribeToMagazine];
+        if(userIsSubscribedToCurrentIssue){
+            [self showIssue:info];
+        }
+        else{
+            [info subscribeToIssue];
+        }
     }
 }
 
@@ -145,6 +167,17 @@
 - (CGFloat)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout*)collectionViewLayout minimumInteritemSpacingForSectionAtIndex:(NSInteger)section{
     id<ADVTheme> theme = [AppDelegate instance].theme;
     return [theme cellItemSpacing];
+}
+
+- (CGSize)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout*)collectionViewLayout referenceSizeForHeaderInSection:(NSInteger)section {
+ 
+    BOOL userIsSusbcribedToTheMagazine = [self.storeManager isSubscribedToContent:[self.repository inAppPurchaseSubscriptionId]];
+    if(userIsSusbcribedToTheMagazine) {
+        return CGSizeZero;
+    }
+    else{
+        return CGSizeMake(self.collectionView.bounds.size.width, 162);
+    }
 }
 
 
@@ -189,7 +222,7 @@
     
     if(range.location == NSNotFound){ //Means PDF issue
     
-        NSString* contentPDFPath = [issue.contentURL.path stringByAppendingString:kPDFIssueFilename];
+        NSString* contentPDFPath = [self loadPDFFilenameFromIssue:issue];
         NSFileManager* fileManager = [NSFileManager defaultManager];
         NSError* error;
         [fileManager moveItemAtPath:destinationURL.path toPath:contentPDFPath error:&error];
@@ -265,10 +298,10 @@
     
     if([issueInfo.type isEqualToString:@"pdf"]){
        
-        NSString* issuePath = [nkIssue.contentURL.path stringByAppendingString:kPDFIssueFilename];
-         ReaderDocument *document = [ReaderDocument withDocumentFilePath:issuePath password:@""];
+        NSString* issuePath = [self loadPDFFilenameFromIssue:issueInfo.nkIssue];
+        ReaderDocument *document = [ReaderDocument withDocumentFilePath:issuePath password:@""];
          
-         if (document != nil) 
+         if (document != nil)
          {
              ReaderViewController *readerViewController = [[ReaderViewController alloc] initWithReaderDocument:document];
          
@@ -284,15 +317,24 @@
         
         if(bookData){
             
-            BakerBook* book = [[BakerBook alloc] initWithBookData:bookData];
-            [book updateBookPath:issuePath bundled:NO];
-            
-            BakerViewController *bakerViewController = [[BakerViewController alloc] initWithBook:book];
-            [self.navigationController pushViewController:bakerViewController animated:YES];
-            
+            NSArray* contents = bookData[@"contents"];
+            if(contents.count > 0){
+                
+                MagazinePageViewController* pageViewController = [[MagazinePageViewController alloc] init];
+                
+                pageViewController.htmlFiles = bookData[@"contents"];
+                pageViewController.issueInfo = issueInfo;
+                
+                [self.navigationController presentViewController:pageViewController animated:YES completion:nil];
+                
+            }
+            else{
+                UIAlertView* alert = [[UIAlertView alloc] initWithTitle:@"Pages" message:@"The magazine issue has no pages" delegate:self cancelButtonTitle:@"OK" otherButtonTitles:nil];
+                
+                [alert show];
+            }
         }
     }
-    
 }
 
 -(void)returnToIssueListInitiated
@@ -312,6 +354,10 @@
   
     int index = [self.publisher indexOfIssue:issueInfo];
     [downloader downloadIssue:issueInfo forIndexTag:index];
+}
+
+-(void)subscribeButtonTapped{
+    [self subscribeToMagazine];
 }
 
 -(void)subscribeToMagazine
@@ -349,10 +395,6 @@
             }
         }
     }
-    else{
-        UIAlertView* alert = [[UIAlertView alloc] initWithTitle:@"Error With Subscription" message:@"Could not find product with specified ID" delegate:self cancelButtonTitle:@"OK" otherButtonTitles: nil];
-        [alert show];
-    }
     
     [self reloadGridWithIssues];
 }
@@ -362,10 +404,28 @@
    
     self.storeManager.delegate = nil;
     
-    UIAlertView* alert = [[UIAlertView alloc] initWithTitle:@"Success" message:@"You have successfully subscribed to the magazine. Please select an issue to start reading" delegate:self cancelButtonTitle:@"OK" otherButtonTitles:nil];
-    [alert show];
+    if(success){
+        
+        UIAlertView* alert = [[UIAlertView alloc] initWithTitle:@"Success" message:@"You have successfully subscribed to the magazine. Please select an issue to start reading" delegate:self cancelButtonTitle:@"OK" otherButtonTitles:nil];
+        [alert show];
+    }
 }
 
+
+-(void)restorePurchases{
+    
+    self.storeManager.delegate = self;
+    [self.storeManager restorePurchases];
+}
+
+-(void)didRestoreAllPurchases{
+    self.storeManager.delegate = nil;
+    
+    UIAlertView* alert = [[UIAlertView alloc] initWithTitle:@"Success" message:@"All your purchases have been restored" delegate:self cancelButtonTitle:@"OK" otherButtonTitles:nil];
+    [alert show];
+    
+    [self reloadGridWithIssues];
+}
 
 -(void)trashContent {
     NKLibrary *nkLib = [NKLibrary sharedLibrary];
@@ -377,4 +437,13 @@
     [self.collectionView reloadData];
 }
 
+
+-(NSString*)loadPDFFilenameFromIssue:(NKIssue*)issue{
+    
+    NSString* lastPathComponentWithExtension = [NSString stringWithFormat:@"/%@.pdf", issue.contentURL.lastPathComponent];
+    
+    NSString* contentPDFPath = [issue.contentURL.path stringByAppendingString:lastPathComponentWithExtension];
+    
+    return contentPDFPath;
+}
 @end

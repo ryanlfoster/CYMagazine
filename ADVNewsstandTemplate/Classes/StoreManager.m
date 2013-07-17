@@ -8,9 +8,6 @@
 #define DocumentsDirectory [NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, \
 NSUserDomainMask, YES) objectAtIndex:0]
 
-//#define kFreeSubscription @"advnewsstand.subscription.paid"
-//#define kFreeSubscriptionReceiptId @"advnewsstand.subscription.receipt"
-
 #import "StoreManager.h"
 #import "AppDelegate.h"
 
@@ -77,8 +74,10 @@ NSUserDomainMask, YES) objectAtIndex:0]
             case SKPaymentTransactionStatePurchasing:
                 break;
             case SKPaymentTransactionStatePurchased:
-            case SKPaymentTransactionStateRestored:
                 [self finishedTransaction:transaction];
+                break;
+            case SKPaymentTransactionStateRestored:
+                [self restoredTransaction:transaction];
                 break;
             default:
                 break;
@@ -88,6 +87,7 @@ NSUserDomainMask, YES) objectAtIndex:0]
 
 -(void)paymentQueueRestoreCompletedTransactionsFinished:(SKPaymentQueue *)queue {
     NSLog(@"Restored all completed transactions");
+    [self.delegate didRestoreAllPurchases];
 }
 
 -(void)finishedTransaction:(SKPaymentTransaction *)transaction {
@@ -101,6 +101,18 @@ NSUserDomainMask, YES) objectAtIndex:0]
     
     [self.delegate subscriptionCompletedWith:YES forInAppPurchaseId:transaction.payment.productIdentifier];
 }
+
+-(void)restoredTransaction:(SKPaymentTransaction *)transaction {
+    NSLog(@"Restored transaction");
+    NSLog(@"%@", transaction.payment.productIdentifier);
+    [[SKPaymentQueue defaultQueue] finishTransaction:transaction];
+    
+    // save receipt
+    [[NSUserDefaults standardUserDefaults] setObject:transaction.transactionIdentifier forKey:transaction.payment.productIdentifier];
+    // check receipt
+    [self checkReceipt:transaction.transactionReceipt];
+}
+
 
 -(void)errorWithTransaction:(SKPaymentTransaction *)transaction {
     [[SKPaymentQueue defaultQueue] finishTransaction:transaction];
@@ -125,41 +137,8 @@ NSUserDomainMask, YES) objectAtIndex:0]
     [receiptStorage writeToFile:receiptStorageFile atomically:YES];
 }
 
-/*
-- (void)requestProUpgradeProductData
-{
-    NSSet *productIdentifiers = [NSSet setWithObject:@"com.runmonster.runmonsterfree.upgradetopro" ];
-    productsRequest = [[SKProductsRequest alloc] initWithProductIdentifiers:productIdentifiers];
-    productsRequest.delegate = self;
-    [productsRequest start];
-    
-    // we will release the request object in the delegate callback
+-(void)restorePurchases{
+    [[SKPaymentQueue defaultQueue] restoreCompletedTransactions];
 }
 
-#pragma mark -
-#pragma mark SKProductsRequestDelegate methods
-
-- (void)productsRequest:(SKProductsRequest *)request didReceiveResponse:(SKProductsResponse *)response
-{
-    NSArray *products = response.products;
-    proUpgradeProduct = [products count] == 1 ? [[products firstObject] retain] : nil;
-    if (proUpgradeProduct)
-    {
-        NSLog(@"Product title: %@" , proUpgradeProduct.localizedTitle);
-        NSLog(@"Product description: %@" , proUpgradeProduct.localizedDescription);
-        NSLog(@"Product price: %@" , proUpgradeProduct.price);
-        NSLog(@"Product id: %@" , proUpgradeProduct.productIdentifier);
-    }
-    
-    for (NSString *invalidProductId in response.invalidProductIdentifiers)
-    {
-        NSLog(@"Invalid product id: %@" , invalidProductId);
-    }
-    
-    // finally release the reqest we alloc/init’ed in requestProUpgradeProductData
-    [productsRequest release];
-    
-    [[NSNotificationCenter defaultCenter] postNotificationName:kInAppPurchaseManagerProductsFetchedNotification object:self userInfo:nil];
-}
-*/
 @end

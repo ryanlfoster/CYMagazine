@@ -9,14 +9,13 @@
 #import <UIKit/UIKit.h>
 #import "NewsstandDownloader.h"
 #import "StoreManager.h"
-#import "InterceptorWindow.h"
 #import "Publisher.h"
 #import "ADVTheme.h"
 #import "Repository.h"
 
 @interface AppDelegate : UIResponder <UIApplicationDelegate>
 
-@property (strong, nonatomic) InterceptorWindow *window;
+@property (strong, nonatomic) UIWindow *window;
 
 @property (nonatomic, strong) NewsstandDownloader * newsstandDownloader;
 
