@@ -12,6 +12,8 @@
 	<array>
 		<string>ios-icon-iphone</string>
 		<string>ios-icon-ipad</string>
+		<string>app icon image 72x72.png</string>
+		<string>app icon image 144x144.png</string>
 	</array>
 	<key>CFBundleIcons</key>
 	<dict>
@@ -21,6 +23,8 @@
 			<array>
 				<string>ios-icon-iphone</string>
 				<string>ios-icon-ipad</string>
+				<string>app icon image 72x72.png</string>
+				<string>app icon image 144x144.png</string>
 			</array>
 		</dict>
 		<key>UINewsstandIcon</key>
@@ -44,11 +48,11 @@
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
 	<key>CFBundleShortVersionString</key>
-	<string>1.0</string>
+	<string>1.1</string>
 	<key>CFBundleSignature</key>
 	<string>????</string>
 	<key>CFBundleVersion</key>
-	<string>1.0</string>
+	<string>1.1</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>UIBackgroundModes</key>
@@ -63,6 +67,8 @@
 	<array>
 		<string>armv7</string>
 	</array>
+	<key>UIStatusBarHidden~ipad</key>
+	<true/>
 	<key>UISupportedInterfaceOrientations~ipad</key>
 	<array>
 		<string>UIInterfaceOrientationPortrait</string>
