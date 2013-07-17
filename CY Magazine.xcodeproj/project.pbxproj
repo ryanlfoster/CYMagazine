@@ -15,6 +15,7 @@
 		DB66900C17975E7100A68460 /* Default-Landscape@2x~ipad.png in Resources */ = {isa = PBXBuildFile; fileRef = DB668FFD17975D9200A68460 /* Default-Landscape@2x~ipad.png */; };
 		DB66900D17975E7300A68460 /* Default-Landscape~ipad.png in Resources */ = {isa = PBXBuildFile; fileRef = DB668FFE17975D9200A68460 /* Default-Landscape~ipad.png */; };
 		DB66900E17975E7D00A68460 /* Default-Portrait~ipad.png in Resources */ = {isa = PBXBuildFile; fileRef = DB66900017975D9200A68460 /* Default-Portrait~ipad.png */; };
+		DB6690111797611900A68460 /* IssueCellHeader.m in Sources */ = {isa = PBXBuildFile; fileRef = DB6690101797611900A68460 /* IssueCellHeader.m */; };
 		EC00EF5A1777632600608389 /* BlueTheme.m in Sources */ = {isa = PBXBuildFile; fileRef = EC00EF591777632600608389 /* BlueTheme.m */; };
 		EC00EFB7177769CA00608389 /* red-back.png in Resources */ = {isa = PBXBuildFile; fileRef = EC00EF73177769CA00608389 /* red-back.png */; };
 		EC00EFB8177769CA00608389 /* red-back@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = EC00EF74177769CA00608389 /* red-back@2x.png */; };
@@ -175,6 +176,8 @@
 		DB66900017975D9200A68460 /* Default-Portrait~ipad.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Default-Portrait~ipad.png"; sourceTree = SOURCE_ROOT; };
 		DB66900117975D9200A68460 /* TCY iPad 768x1024.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "TCY iPad 768x1024.png"; sourceTree = SOURCE_ROOT; };
 		DB66900217975D9300A68460 /* TCY iPad 1024x768.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "TCY iPad 1024x768.png"; sourceTree = SOURCE_ROOT; };
+		DB66900F1797611200A68460 /* IssueCellHeader.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = IssueCellHeader.h; path = CollectionViewCells/IssueCellHeader.h; sourceTree = "<group>"; };
+		DB6690101797611900A68460 /* IssueCellHeader.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = IssueCellHeader.m; path = CollectionViewCells/IssueCellHeader.m; sourceTree = "<group>"; };
 		EC00EF581777632600608389 /* BlueTheme.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BlueTheme.h; path = Theme/BlueTheme.h; sourceTree = "<group>"; };
 		EC00EF591777632600608389 /* BlueTheme.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BlueTheme.m; path = Theme/BlueTheme.m; sourceTree = "<group>"; };
 		EC00EF5B1777641000608389 /* ADVTheme.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = ADVTheme.h; path = Theme/ADVTheme.h; sourceTree = "<group>"; };
@@ -659,6 +662,8 @@
 		ECB3F61916E8D6EA002D2EA0 /* CollectionViewCells */ = {
 			isa = PBXGroup;
 			children = (
+				DB6690101797611900A68460 /* IssueCellHeader.m */,
+				DB66900F1797611200A68460 /* IssueCellHeader.h */,
 				ECB3F61A16E8D71C002D2EA0 /* IssueCell.h */,
 				ECB3F61B16E8D71C002D2EA0 /* IssueCell.m */,
 				ECB3F61D16E8D9E6002D2EA0 /* IssueCell.xib */,
@@ -978,6 +983,7 @@
 				ECE48C2E17969F6B00E906DF /* mztools.c in Sources */,
 				ECE48C2F17969F6B00E906DF /* unzip.c in Sources */,
 				ECE48C3017969F6B00E906DF /* zip.c in Sources */,
+				DB6690111797611900A68460 /* IssueCellHeader.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
