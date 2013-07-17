@@ -1073,10 +1073,14 @@
 		ECB3F61516E8D3FB002D2EA0 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CODE_SIGN_IDENTITY = "iPhone Developer: John Fox (62JSC8DL5Y)";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer: John Fox (62JSC8DL5Y)";
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "ADVNewsstandTemplate/CY Magazine-Prefix.pch";
 				INFOPLIST_FILE = "ADVNewsstandTemplate/CY Magazine-Info.plist";
 				PRODUCT_NAME = "CY Magazine";
+				PROVISIONING_PROFILE = "";
+				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "";
 				WRAPPER_EXTENSION = app;
 			};
 			name = Debug;
@@ -1084,10 +1088,14 @@
 		ECB3F61616E8D3FB002D2EA0 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CODE_SIGN_IDENTITY = "iPhone Developer: John Fox (62JSC8DL5Y)";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer: John Fox (62JSC8DL5Y)";
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "ADVNewsstandTemplate/CY Magazine-Prefix.pch";
 				INFOPLIST_FILE = "ADVNewsstandTemplate/CY Magazine-Info.plist";
 				PRODUCT_NAME = "CY Magazine";
+				PROVISIONING_PROFILE = "";
+				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "";
 				WRAPPER_EXTENSION = app;
 			};
 			name = Release;
