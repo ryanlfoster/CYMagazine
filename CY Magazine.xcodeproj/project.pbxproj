@@ -112,8 +112,6 @@
 		EC0E327A16EA34B700F8A633 /* issue_01.png in Resources */ = {isa = PBXBuildFile; fileRef = EC0E327516EA34B700F8A633 /* issue_01.png */; };
 		EC26EF75178DAEB900CB1BF3 /* MagazinePageViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = EC26EF74178DAEB900CB1BF3 /* MagazinePageViewController.m */; };
 		EC26EF79178DB09D00CB1BF3 /* MagazineViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = EC26EF77178DB09D00CB1BF3 /* MagazineViewController.m */; };
-		EC34F0B4179681010079625A /* IssueCellHeader.m in Sources */ = {isa = PBXBuildFile; fileRef = EC34F0B3179681010079625A /* IssueCellHeader.m */; };
-		EC34F0B6179681140079625A /* IssueCellHeader.xib in Resources */ = {isa = PBXBuildFile; fileRef = EC34F0B5179681140079625A /* IssueCellHeader.xib */; };
 		ECB3F5F516E8D3FA002D2EA0 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = ECB3F5F416E8D3FA002D2EA0 /* UIKit.framework */; };
 		ECB3F5F716E8D3FA002D2EA0 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = ECB3F5F616E8D3FA002D2EA0 /* Foundation.framework */; };
 		ECB3F5F916E8D3FA002D2EA0 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = ECB3F5F816E8D3FA002D2EA0 /* CoreGraphics.framework */; };
@@ -282,9 +280,6 @@
 		EC26EF74178DAEB900CB1BF3 /* MagazinePageViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MagazinePageViewController.m; path = HTMLViewer/MagazinePageViewController.m; sourceTree = "<group>"; };
 		EC26EF76178DB09D00CB1BF3 /* MagazineViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MagazineViewController.h; path = HTMLViewer/MagazineViewController.h; sourceTree = "<group>"; };
 		EC26EF77178DB09D00CB1BF3 /* MagazineViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MagazineViewController.m; path = HTMLViewer/MagazineViewController.m; sourceTree = "<group>"; };
-		EC34F0B2179681010079625A /* IssueCellHeader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = IssueCellHeader.h; path = CollectionViewCells/IssueCellHeader.h; sourceTree = "<group>"; };
-		EC34F0B3179681010079625A /* IssueCellHeader.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = IssueCellHeader.m; path = CollectionViewCells/IssueCellHeader.m; sourceTree = "<group>"; };
-		EC34F0B5179681140079625A /* IssueCellHeader.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = IssueCellHeader.xib; sourceTree = "<group>"; };
 		ECB3F5F116E8D3FA002D2EA0 /* CY Magazine.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "CY Magazine.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		ECB3F5F416E8D3FA002D2EA0 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		ECB3F5F616E8D3FA002D2EA0 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
@@ -671,9 +666,6 @@
 				EC0B427F17859D8E00772BC2 /* IssueCellMagrack.m */,
 				EC0B428117859DB000772BC2 /* IssueCellMagrack.xib */,
 				ECE1D7671785A31F000C460C /* IssueCellProtocol.h */,
-				EC34F0B2179681010079625A /* IssueCellHeader.h */,
-				EC34F0B3179681010079625A /* IssueCellHeader.m */,
-				EC34F0B5179681140079625A /* IssueCellHeader.xib */,
 			);
 			name = CollectionViewCells;
 			sourceTree = "<group>";
@@ -926,7 +918,6 @@
 				EC0B42731785941600772BC2 /* magrack-navigationBackground.png in Resources */,
 				EC0B42741785941600772BC2 /* magrack-navigationBackground@2x.png in Resources */,
 				EC0B428217859DB000772BC2 /* IssueCellMagrack.xib in Resources */,
-				EC34F0B6179681140079625A /* IssueCellHeader.xib in Resources */,
 				DB66900317975D9300A68460 /* app icon image 72x72.png in Resources */,
 				DB66900417975D9300A68460 /* app icon image 144x144.png in Resources */,
 				DB66900917975D9300A68460 /* TCY iPad 768x1024.png in Resources */,
@@ -983,7 +974,6 @@
 				EC0B428017859D8E00772BC2 /* IssueCellMagrack.m in Sources */,
 				EC26EF75178DAEB900CB1BF3 /* MagazinePageViewController.m in Sources */,
 				EC26EF79178DB09D00CB1BF3 /* MagazineViewController.m in Sources */,
-				EC34F0B4179681010079625A /* IssueCellHeader.m in Sources */,
 				ECE48C2D17969F6B00E906DF /* ioapi.c in Sources */,
 				ECE48C2E17969F6B00E906DF /* mztools.c in Sources */,
 				ECE48C2F17969F6B00E906DF /* unzip.c in Sources */,
